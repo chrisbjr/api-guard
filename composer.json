@@ -12,12 +12,13 @@
     "require": {
         "php": ">=5.4.0",
         "illuminate/support": "4.2.*",
-        "zizaco/confide": "3.2.*"
+        "illuminate/database": "*"
     },
     "autoload": {
         "classmap": [
             "src/migrations",
-            "src/controllers"
+            "src/controllers",
+            "src/models"
         ],
         "psr-0": {
             "Chrisbjr\\ApiGuard\\": "src/"
