@@ -1,6 +1,8 @@
 {
     "name": "chrisbjr/api-guard",
-    "description": "",
+    "description": "A simple way of authenticating your APIs with API keys using Laravel",
+    "keywords": ["api", "rest", "controller", "laravel", "api keys"],
+    "homepage": "https://github.com/chrisbjr/ApiGuard",
     "authors": [
         {
             "name": "Chris Bautista",
