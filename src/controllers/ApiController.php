@@ -1,6 +1,13 @@
 <?php
 namespace Chrisbjr\ApiGuard;
 
+use Illuminate\Routing\Controller;
+use Route;
+use Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Response;
+
 class ApiController extends Controller
 {
 
