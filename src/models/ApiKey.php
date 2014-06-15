@@ -16,7 +16,7 @@ class ApiKey extends \Eloquent
     public function generateKey()
     {
         do {
-            $salt = do_hash(time() . mt_rand());
+            $salt = sha1(time() . mt_rand());
             $newKey = substr($salt, 0, 40);
         } // Already in the DB? Fail. Try again
         while ($this->keyExists($newKey));

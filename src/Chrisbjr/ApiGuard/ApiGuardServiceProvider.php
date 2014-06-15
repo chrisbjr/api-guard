@@ -19,6 +19,8 @@ class ApiGuardServiceProvider extends ServiceProvider {
 	public function boot()
 	{
 		$this->package('chrisbjr/api-guard');
+
+        require_once __DIR__.'/../../routes.php';
 	}
 
 	/**

@@ -26,4 +26,15 @@ return array(
 
     'keyName' => 'X-API-KEY',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Register Route
+    |--------------------------------------------------------------------------
+    |
+    | You can set this to false once you've generated an API key
+    |
+    */
+
+    'registerApi' => false
+
 );

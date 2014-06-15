@@ -10,10 +10,11 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Response;
 
-class ApiController extends Controller
+class ApiGuardController extends Controller
 {
 
     protected $apiMethods;
+    public $apiKey;
 
     public function __construct()
     {
@@ -35,7 +36,7 @@ class ApiController extends Controller
 
             // We should check if key authentication is enabled for this method
             $keyAuthentication = true;
-            if (!empty($apiMethods[$method]['keyAuthentication']) && $apiMethods[$method]['keyAuthentication'] === false) {
+            if (isset($apiMethods[$method]['keyAuthentication']) && $apiMethods[$method]['keyAuthentication'] === false) {
                 $keyAuthentication = false;
             }
 
@@ -57,12 +58,12 @@ class ApiController extends Controller
                     return $this->response(null, 401, 'You do not have access to this API.');
                 }
 
-                $apiKey = $apiKeyQuery->get(0);
+                $this->apiKey = $apiKeyQuery->get(0);
 
                 // API key exists
                 // Check level of API
                 if (!empty($apiMethods[$method]['level'])) {
-                    if ($apiKey->level < $apiMethods[$method]['level']) {
+                    if ($this->apiKey->level < $apiMethods[$method]['level']) {
                         return $this->response(null, 403, 'You do not have access to this API method.');
                     }
                 }
@@ -74,9 +75,9 @@ class ApiController extends Controller
                         Log::warning("[chrisbjr/ApiGuard] You specified a limit in the $method method but API logging needs to be enabled in the configuration for this to work.");
                     }
 
-                    if (!$apiKey->ignore_limits) {
+                    if (!$this->apiKey->ignore_limits) {
                         // Count the number of requests for this method using this api key
-                        $apiLogCount = ApiLog::where('api_key_id', '=', $apiKey->id)
+                        $apiLogCount = ApiLog::where('api_key_id', '=', $this->apiKey->id)
                             ->where('route', '=', Route::currentRouteAction())
                             ->where('method', '=', Request::getMethod())
                             ->where('created_at', '>=', date('Y-m-d H:i:s', mktime(date('H') - 1)))
@@ -92,7 +93,7 @@ class ApiController extends Controller
                 if (Config::get('api-guard::logging')) {
                     // Log this API request
                     $apiLog = new ApiLog;
-                    $apiLog->api_key_id = $apiKey->id;
+                    $apiLog->api_key_id = $this->apiKey->id;
                     $apiLog->route = Route::currentRouteAction();
                     $apiLog->method = Request::getMethod();
                     $apiLog->params = http_build_query(Input::all());
