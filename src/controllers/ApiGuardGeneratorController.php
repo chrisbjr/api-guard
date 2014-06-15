@@ -14,7 +14,7 @@ use Input;
 class ApiGuardGeneratorController extends ApiGuardController
 {
     protected $apiMethods = [
-        'postRegister' => [
+        'postGenerate' => [
             'keyAuthentication' => false
         ]
     ];

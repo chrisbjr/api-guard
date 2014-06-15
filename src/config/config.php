@@ -28,13 +28,13 @@ return array(
 
     /*
     |--------------------------------------------------------------------------
-    | Register Route
+    | ApiGuard key generator route
     |--------------------------------------------------------------------------
     |
-    | You can set this to false once you've generated an API key
+    | You can set this to false once you're done generating an initial API key
     |
     */
 
-    'registerApi' => false
+    'generateApiRoute' => false
 
 );
