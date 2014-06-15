@@ -4,6 +4,8 @@ namespace Chrisbjr\ApiGuard;
 use Illuminate\Routing\Controller;
 use Route;
 use Request;
+use Config;
+use Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Response;
@@ -17,63 +19,89 @@ class ApiController extends Controller
     {
         $this->beforeFilter(function () {
 
-            $key = Request::header('X-API-KEY');
+            // This is the $apiMethods declared in the controller
+            $apiMethods = $this->getBeforeFilters()[0]['options']['apiMethods'];
 
-            if (empty($key)) {
-                return $this->response(null, 401, 'You do not have access to this API.');
-            }
-
+            // Let's get the method
             Str::parseCallback(Route::currentRouteAction(), null);
             $routeArray = Str::parseCallback(Route::currentRouteAction(), null);
 
             if (last($routeArray) == null) {
+                // There is no method?
                 return $this->response(null, 403, 'Invalid route.');
             }
 
-            $apiMethods = $this->getBeforeFilters()[0]['options']['apiMethods'];
             $method = last($routeArray);
 
-            $apiKeyQuery = ApiKey::where('key', '=', $key)->limit(1)->get();
-
-            if (count($apiKeyQuery) <= 0) {
-                return $this->response(null, 401, 'You do not have access to this API.');
+            // We should check if key authentication is enabled for this method
+            $keyAuthentication = true;
+            if (!empty($apiMethods[$method]['keyAuthentication']) && $apiMethods[$method]['keyAuthentication'] === false) {
+                $keyAuthentication = false;
             }
 
-            $apiKey = $apiKeyQuery->get(0);
+            if ($keyAuthentication === true) {
 
-            // API key exists
-            // Check level of API
-            if (!empty($apiMethods[$method]['level'])) {
-                if ($apiKey->level < $apiMethods[$method]['level']) {
-                    return $this->response(null, 403, 'You do not have access to this API method.');
+                $key = Request::header(Config::get('api-guard::keyName'));
+                if (empty($key)) {
+                    // Try getting the key from elsewhere
+                    $key = Input::get(Config::get('api-guard::keyName'));
                 }
-            }
 
-            // Then check the limits of this method
-            if (!empty($apiMethods[$method]['limit'])) {
-                if (!$apiKey->ignore_limits) {
-                    // Count the number of requests for this method using this api key
-                    $apiLogCount = ApiLog::where('api_key_id', '=', $apiKey->id)
-                        ->where('route', '=', Route::currentRouteAction())
-                        ->where('method', '=', Request::getMethod())
-                        ->where('created_at', '>=', date('Y-m-d H:i:s', mktime(date('H') - 1)))
-                        ->where('created_at', '<=', date('Y-m-d H:i:s', mktime(date('H'))))
-                        ->count();
+                if (empty($key)) {
+                    return $this->response(null, 401, 'You do not have access to this API.');
+                }
 
-                    if ($apiLogCount >= $apiMethods[$method]['limit']) {
-                        return $this->response(null, 403, 'You have reached the limit for using this API.');
+                $apiKeyQuery = ApiKey::where('key', '=', $key)->limit(1)->get();
+
+                if (count($apiKeyQuery) <= 0) {
+                    return $this->response(null, 401, 'You do not have access to this API.');
+                }
+
+                $apiKey = $apiKeyQuery->get(0);
+
+                // API key exists
+                // Check level of API
+                if (!empty($apiMethods[$method]['level'])) {
+                    if ($apiKey->level < $apiMethods[$method]['level']) {
+                        return $this->response(null, 403, 'You do not have access to this API method.');
                     }
                 }
+
+                // Then check the limits of this method
+                if (!empty($apiMethods[$method]['limit'])) {
+
+                    if (Config::get('api-guard::logging') === false) {
+                        Log::warning("[chrisbjr/ApiGuard] You specified a limit in the $method method but API logging needs to be enabled in the configuration for this to work.");
+                    }
+
+                    if (!$apiKey->ignore_limits) {
+                        // Count the number of requests for this method using this api key
+                        $apiLogCount = ApiLog::where('api_key_id', '=', $apiKey->id)
+                            ->where('route', '=', Route::currentRouteAction())
+                            ->where('method', '=', Request::getMethod())
+                            ->where('created_at', '>=', date('Y-m-d H:i:s', mktime(date('H') - 1)))
+                            ->where('created_at', '<=', date('Y-m-d H:i:s', mktime(date('H'))))
+                            ->count();
+
+                        if ($apiLogCount >= $apiMethods[$method]['limit']) {
+                            return $this->response(null, 403, 'You have reached the limit for using this API.');
+                        }
+                    }
+                }
+
+                if (Config::get('api-guard::logging')) {
+                    // Log this API request
+                    $apiLog = new ApiLog;
+                    $apiLog->api_key_id = $apiKey->id;
+                    $apiLog->route = Route::currentRouteAction();
+                    $apiLog->method = Request::getMethod();
+                    $apiLog->params = http_build_query(Input::all());
+                    $apiLog->ip_address = Request::getClientIp();
+                    $apiLog->save();
+                }
+
             }
 
-            // Log this API request
-            $apiLog = new ApiLog;
-            $apiLog->api_key_id = $apiKey->id;
-            $apiLog->route = Route::currentRouteAction();
-            $apiLog->method = Request::getMethod();
-            $apiLog->params = http_build_query(Input::all());
-            $apiLog->ip_address = Request::getClientIp();
-            $apiLog->save();
 
         }, ['apiMethods' => $this->apiMethods]);
     }
