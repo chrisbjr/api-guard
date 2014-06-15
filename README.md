@@ -26,7 +26,7 @@ In your `config/app.php` add `'Chrisbjr\ApiGuard\ApiGuardServiceProvider'` to th
 
     ),
 
-Now generate the api-guard migration and the reminder password table migration:
+Now generate the api-guard migration:
 
     $ php artisan migrate --package="chrisbjr/api-guard"
 
