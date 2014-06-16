@@ -77,9 +77,9 @@ The configuration file will be found in `app/config/packages/chrisbjr/api-guard/
 Create a controller that extends ApiController:
 
     <?php
-    use Chrisbjr\ApiGuard\ApiController;
+    use Chrisbjr\ApiGuard\ApiGuardController;
 
-    class IpController extends ApiController
+    class IpController extends ApiGuardController
     {
         public getObject() 
         {
@@ -87,4 +87,4 @@ Create a controller that extends ApiController:
         }
     }
     
-That's it! Updates to this documentation coming soon!
+More on usage coming soon...
