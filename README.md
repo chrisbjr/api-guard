@@ -46,7 +46,6 @@ Once the web server is up, you can issue a POST request ApiGuard's pre-defined r
 
 This will generate an API key and should return the following data:
 
-    ```json
     {
         code: 201
         status: "Created"
@@ -60,7 +59,6 @@ This will generate an API key and should return the following data:
             id: 1
         }
     }
-    ```
 
 Take note of your first API key.
 
