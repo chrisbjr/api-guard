@@ -46,7 +46,6 @@ Once the web server is up, you can issue a POST request ApiGuard's pre-defined r
 
 This will generate an API key and should return the following data:
 
-    ```json
     {
         code: 201
         status: "Created"
@@ -60,7 +59,6 @@ This will generate an API key and should return the following data:
             id: 1
         }
     }
-    ```
 
 Take note of your first API key.
 
@@ -76,17 +74,42 @@ The configuration file will be found in `app/config/packages/chrisbjr/api-guard/
 
 ## Usage
 
-Create a controller that extends ApiController:
+Basic usage of ApiGuard is to create a controller and extend that class to use the `ApiGuardController`.
 
     <?php
-    use Chrisbjr\ApiGuard\ApiController;
+    use Chrisbjr\ApiGuard\ApiGuardController;
 
-    class IpController extends ApiController
+    class ObjectApiController extends ApiGuardController
     {
         public getObject() 
         {
-          // Your code here
+            $object_data = array(
+                'id' => 1,
+                'name' => 'object'
+            );
+
+            return $this->response($data, 200);
         }
     }
     
-That's it! Updates to this documentation coming soon!
+You can access the above controller by creating a basic route in your `app/routes.php`:
+
+    Route::get('api/v1/objects', 'ObjectApiController@getObject');
+
+You will need to use your API key and put it in the header to access it. By default, the header value is named `X-API-KEY`. You can change this in the config file.
+
+Try calling this route using `curl`
+
+     curl --header "X-API-KEY: 2ed9d72e5596800bf805ca1c735e446df72019ef" http://localhost:8000/api/v1/objects
+
+You should get the following response:
+
+    {
+        code: 200
+        status: "OK"
+        data: {
+            id: 1,
+            name: "object"
+        }
+    }
+
