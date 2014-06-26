@@ -1,5 +1,5 @@
 <?php
 
-if(Config::get('api-guard::generateApiRoute')) {
-    Route::post('apiguard/generate', 'Chrisbjr\ApiGuard\ApiGuardGeneratorController@postGenerate');
+if (Config::get('api-guard::generateApiKeyRoute')) {
+    Route::post('apiguard/api_key', 'Chrisbjr\ApiGuard\ApiKeyController@create');
 }

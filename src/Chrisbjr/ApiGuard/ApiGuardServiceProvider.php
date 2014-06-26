@@ -20,6 +20,8 @@ class ApiGuardServiceProvider extends ServiceProvider {
 	{
 		$this->package('chrisbjr/api-guard');
 
+        $this->app->register('EllipseSynergie\ApiResponse\Laravel\ResponseServiceProvider');
+
         require_once __DIR__.'/../../routes.php';
 	}
 

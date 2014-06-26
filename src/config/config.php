@@ -35,6 +35,6 @@ return array(
     |
     */
 
-    'generateApiRoute' => true
+    'generateApiKeyRoute' => true
 
 );
