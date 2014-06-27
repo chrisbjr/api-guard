@@ -34,7 +34,7 @@ class ApiGuardController extends Controller
 
             if (last($routeArray) == null) {
                 // There is no method?
-                return $this->response(null, 403, 'Invalid route.');
+                return $this->response->errorMethodNotAllowed();
             }
 
             $method = last($routeArray);
@@ -54,22 +54,20 @@ class ApiGuardController extends Controller
                 }
 
                 if (empty($key)) {
-                    return $this->response(null, 401, 'You do not have access to this API.');
+                    return $this->response->errorUnauthorized();
                 }
 
-                $apiKeyQuery = ApiKey::where('key', '=', $key)->limit(1)->get();
+                $this->apiKey = ApiKey::where('key', '=', $key)->first();
 
-                if (count($apiKeyQuery) <= 0) {
-                    return $this->response(null, 401, 'You do not have access to this API.');
+                if (!isset($this->apiKey->id)) {
+                    return $this->response->errorUnauthorized();
                 }
-
-                $this->apiKey = $apiKeyQuery->get(0);
 
                 // API key exists
                 // Check level of API
                 if (!empty($apiMethods[$method]['level'])) {
                     if ($this->apiKey->level < $apiMethods[$method]['level']) {
-                        return $this->response(null, 403, 'You do not have access to this API method.');
+                        return $this->response->errorForbidden();
                     }
                 }
 
@@ -90,7 +88,7 @@ class ApiGuardController extends Controller
                             ->count();
 
                         if ($apiLogCount >= $apiMethods[$method]['limit']) {
-                            return $this->response(null, 403, 'You have reached the limit for using this API.');
+                            return $this->response->errorUnwillingToProcess('You have reached the limit for using this API.');
                         }
                     }
                 }
