@@ -10,7 +10,7 @@ class ApiKey extends \Eloquent
 
     public function user()
     {
-        return $this->hasOne('User');
+        return $this->belongsTo('User');
     }
 
     public function generateKey()
