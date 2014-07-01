@@ -99,9 +99,21 @@ Basic usage of ApiGuard is to create a controller and extend that class to use t
     {
         protected $apiMethods = [
             'index' => [
-                'limit' => 10,
-                'level' => 1,
                 'keyAuthentication' => true
+                'level' => 1,
+                'limits' => [
+                    // The variable below sets API key limits
+                    'key' => [
+                        'increment' => '1 hour',
+                        'limit' => 100
+                    ],
+                    // The variable below sets API method limits
+                    'method' => [
+                        'increment' => '1 day',
+                        'limit' => 1000
+                    ]
+                ]
+
             ]
         ];
 
@@ -113,7 +125,7 @@ Basic usage of ApiGuard is to create a controller and extend that class to use t
         }
     }
 
-Notice the `$apiMethods` variable. You can set `limit`s , `level`s, and `keyAuthentication` for each method here.
+Notice the `$apiMethods` variable. You can set `limits`s , `level`s, and `keyAuthentication` for each method here.
 If you don't specify any, the defaults would be that no limits would be implemented, no level access, and key authentication would be required.
 
 You should also be able to use the api-response object by using `$this->response`. More examples can be found on the Github page: [https://github.com/ellipsesynergie/api-response](https://github.com/ellipsesynergie/api-response).
