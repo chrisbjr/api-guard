@@ -4,6 +4,17 @@ return array(
 
     /*
     |--------------------------------------------------------------------------
+    | ApiGuard key generator route
+    |--------------------------------------------------------------------------
+    |
+    | You can set this to false once you're done generating an initial API key
+    |
+    */
+
+    'generateApiKeyRoute'  => true,
+
+    /*
+    |--------------------------------------------------------------------------
     | API request logging
     |--------------------------------------------------------------------------
     |
@@ -12,7 +23,7 @@ return array(
     |
     */
 
-    'logging' => true,
+    'logging'              => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -24,17 +35,46 @@ return array(
     |
     */
 
-    'keyName' => 'Authorization',
+    'keyName'              => 'Authorization',
 
     /*
     |--------------------------------------------------------------------------
-    | ApiGuard key generator route
+    | Api key access limit increment
     |--------------------------------------------------------------------------
     |
-    | You can set this to false once you're done generating an initial API key
+    | This is the default value for the increment of limits when defining
+    | limits in the methods. The default value is "1 hour" which means that
+    | if you specified a limit of 100 to a method, it will limit requests to
+    | 100 for every 1 hour. This value can be any value acceptable by the
+    | strtotime() method of PHP.
+    |
+    | Examples:
+    | 1 hour
+    | 1 day
+    | 15 minutes
     |
     */
 
-    'generateApiKeyRoute' => true
+    'keyLimitIncrement'    => '1 hour',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Method key access limit increment
+    |--------------------------------------------------------------------------
+    |
+    | This is the default value for the increment of limits when defining
+    | limits in the methods. The default value is "1 hour" which means that
+    | if you specified a limit of 100 to a method, it will limit requests to
+    | 100 for every 1 hour. This value can be any value acceptable by the
+    | strtotime() method of PHP.
+    |
+    | Examples:
+    | 1 hour
+    | 1 day
+    | 15 minutes
+    |
+    */
+
+    'methodLimitIncrement' => '1 hour',
 
 );
