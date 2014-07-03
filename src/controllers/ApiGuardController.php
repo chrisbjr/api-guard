@@ -79,7 +79,7 @@ class ApiGuardController extends Controller
 
                 $this->apiKey = ApiKey::where('key', '=', $key)->first();
 
-                if (!$this->apiKey->exists) {
+                if (!isset($this->apiKey->id)) {
                     // ApiKey not found
                     return $this->response->errorUnauthorized();
                 }
