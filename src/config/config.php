@@ -39,6 +39,19 @@ return array(
 
     /*
     |--------------------------------------------------------------------------
+    | Variable name for Fractal's include / embed objects
+    |--------------------------------------------------------------------------
+    |
+    | Set the variable name for Fractal's include / embed keyword here. This is
+    | automatically parsed if it exists in the GET parameters. Values are
+    | comma-separated.
+    |
+    */
+
+    'includeKeyword'       => 'include',
+
+    /*
+    |--------------------------------------------------------------------------
     | Api key access limit increment
     |--------------------------------------------------------------------------
     |

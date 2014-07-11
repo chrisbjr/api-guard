@@ -41,7 +41,10 @@ class ApiGuardController extends Controller
 
             // Let's instantiate the response class first
             $this->manager = new Manager;
-            $this->response = new Response(new \League\Fractal\Manager);
+
+            $this->manager->parseIncludes(Input::get(Config::get('api-guard::includeKeyword', 'include'), array()));
+
+            $this->response = new Response($this->manager);
 
             // This is the $apiMethods declared in the controller
             $apiMethods = $this->getBeforeFilters()[0]['options']['apiMethods'];
