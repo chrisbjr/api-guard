@@ -30,6 +30,7 @@ In your `config/app.php` add `'Chrisbjr\ApiGuard\ApiGuardServiceProvider'` to th
         'Illuminate\Foundation\Providers\ArtisanServiceProvider',
         'Illuminate\Auth\AuthServiceProvider',
         ...
+        'EllipseSynergie\ApiResponse\Laravel\ResponseServiceProvider',
         'Chrisbjr\ApiGuard\ApiGuardServiceProvider',
 
     ),
