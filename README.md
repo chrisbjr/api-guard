@@ -117,7 +117,7 @@ Basic usage of ApiGuard is to create a controller and extend that class to use t
             ]
         ];
 
-        public index()
+        public function index()
         {
             $books = Book::all();
 
