@@ -176,7 +176,7 @@ class ApiGuardController extends Controller
             }
             // End of cheking limits
 
-            if (Config::get('api-guard::logging')) {
+            if (Config::get('api-guard::logging') && $keyAuthentication == true) {
                 // Log this API request
                 $apiLog = new ApiLog;
                 $apiLog->api_key_id = $this->apiKey->id;
