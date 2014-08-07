@@ -30,6 +30,7 @@ In your `config/app.php` add `'Chrisbjr\ApiGuard\ApiGuardServiceProvider'` to th
         'Illuminate\Foundation\Providers\ArtisanServiceProvider',
         'Illuminate\Auth\AuthServiceProvider',
         ...
+        'EllipseSynergie\ApiResponse\Laravel\ResponseServiceProvider',
         'Chrisbjr\ApiGuard\ApiGuardServiceProvider',
 
     ),
@@ -117,7 +118,7 @@ Basic usage of ApiGuard is to create a controller and extend that class to use t
             ]
         ];
 
-        public index()
+        public function index()
         {
             $books = Book::all();
 
