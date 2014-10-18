@@ -20,8 +20,8 @@
         "php": ">=5.4.0",
         "illuminate/support": "4.2.*",
         "illuminate/database": "*",
-        "league/fractal": "0.8.*",
-        "ellipsesynergie/api-response": "0.4.*"
+        "league/fractal": "0.9.*",
+        "ellipsesynergie/api-response": "0.7.*"
     },
     "autoload": {
         "classmap": [
