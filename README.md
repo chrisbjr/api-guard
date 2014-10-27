@@ -98,7 +98,7 @@ Basic usage of ApiGuard is to create a controller and extend that class to use t
     {
         protected $apiMethods = [
             'index' => [
-                'keyAuthentication' => true
+                'keyAuthentication' => true,
                 'level' => 1,
                 'limits' => [
                     // The variable below sets API key limits
