@@ -47,7 +47,7 @@ class ApiGuardController extends Controller
             $this->response = new Response($this->manager);
 
             // api-guard might not be the only before filter on the controller
-			// loop through any before filters and pull out $apiMethods in the controller
+            // loop through any before filters and pull out $apiMethods in the controller
 			$beforeFilters = $this->getBeforeFilters();
 			foreach($beforeFilters as $filter) {
 				if(!empty($filter['options'])) {
