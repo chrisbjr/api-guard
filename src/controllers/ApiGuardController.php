@@ -50,7 +50,7 @@ class ApiGuardController extends Controller
             // loop through any before filters and pull out $apiMethods in the controller
 			$beforeFilters = $this->getBeforeFilters();
 			foreach($beforeFilters as $filter) {
-				if(!empty($filter['options'])) {
+				if(!empty($filter['options']['apiMethods'])) {
 					$apiMethods = $filter['options']['apiMethods'];
 				}
 			}
