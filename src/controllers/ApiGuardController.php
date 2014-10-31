@@ -46,8 +46,14 @@ class ApiGuardController extends Controller
 
             $this->response = new Response($this->manager);
 
-            // This is the $apiMethods declared in the controller
-            $apiMethods = $this->getBeforeFilters()[0]['options']['apiMethods'];
+            // api-guard might not be the only before filter on the controller
+			// loop through any before filters and pull out $apiMethods in the controller
+			$beforeFilters = $this->getBeforeFilters();
+			foreach($beforeFilters as $filter) {
+				if(!empty($filter['options'])) {
+					$apiMethods = $filter['options']['apiMethods'];
+				}
+			}
 
             // This is the actual request object used
             $request =  Route::getCurrentRequest();
