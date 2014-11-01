@@ -48,15 +48,15 @@ class ApiGuardController extends Controller
 
             // api-guard might not be the only before filter on the controller
             // loop through any before filters and pull out $apiMethods in the controller
-			$beforeFilters = $this->getBeforeFilters();
-			foreach($beforeFilters as $filter) {
-				if(!empty($filter['options']['apiMethods'])) {
-					$apiMethods = $filter['options']['apiMethods'];
-				}
-			}
+            $beforeFilters = $this->getBeforeFilters();
+            foreach ($beforeFilters as $filter) {
+                if (!empty($filter['options']['apiMethods'])) {
+                    $apiMethods = $filter['options']['apiMethods'];
+                }
+            }
 
             // This is the actual request object used
-            $request =  Route::getCurrentRequest();
+            $request = Route::getCurrentRequest();
 
             // Let's get the method
             Str::parseCallback(Route::currentRouteAction(), null);
@@ -136,7 +136,7 @@ class ApiGuardController extends Controller
                                 // Count the number of requests for this method using this api key
                                 $apiLogCount = ApiLog::where('api_key_id', '=', $this->apiKey->id)
                                     ->where('route', '=', Route::currentRouteAction())
-                                    ->where('method', '=',  $request->getMethod())
+                                    ->where('method', '=', $request->getMethod())
                                     ->where('created_at', '>=', date('Y-m-d H:i:s', $keyIncrementTime))
                                     ->where('created_at', '<=', date('Y-m-d H:i:s'))
                                     ->count();
@@ -169,7 +169,7 @@ class ApiGuardController extends Controller
                             } else {
                                 // Count the number of requests for this method
                                 $apiLogCount = ApiLog::where('route', '=', Route::currentRouteAction())
-                                    ->where('method', '=',  $request->getMethod())
+                                    ->where('method', '=', $request->getMethod())
                                     ->where('created_at', '>=', date('Y-m-d H:i:s', $methodIncrementTime))
                                     ->where('created_at', '<=', date('Y-m-d H:i:s'))
                                     ->count();
@@ -190,9 +190,9 @@ class ApiGuardController extends Controller
                 $apiLog = new ApiLog;
                 $apiLog->api_key_id = $this->apiKey->id;
                 $apiLog->route = Route::currentRouteAction();
-                $apiLog->method =  $request->getMethod();
+                $apiLog->method = $request->getMethod();
                 $apiLog->params = http_build_query(Input::all());
-                $apiLog->ip_address =  $request->getClientIp();
+                $apiLog->ip_address = $request->getClientIp();
                 $apiLog->save();
             }
         }, ['apiMethods' => $this->apiMethods]);
