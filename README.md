@@ -130,7 +130,7 @@ Basic usage of ApiGuard is to create a controller and extend that class to use t
         {
             try {
                 $book = Book::findOrFail($id);
-            } catch (\ModelNotFoundException $e) {
+            } catch (ModelNotFoundException $e) {
                 return $this->response->errorNotFound();
             }
         }
@@ -143,7 +143,8 @@ You should also be able to use the api-response object by using `$this->response
 
 You can access the above controller by creating a basic route in your `app/routes.php`:
 
-    Route::get('api/v1/books', 'BooksController@index');
+    Route::get('api/v1/books', 'BooksController@all');
+    Route::get('api/v1/books/{id}', 'BooksController@show');
 
 You will need to use your API key and put it in the header to access it. By default, the header value is using the `Authorization` parameter. You can change this in the config file.
 
