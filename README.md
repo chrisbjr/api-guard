@@ -174,7 +174,7 @@ You should get the following response:
         }
     }
 
-### Accessing the User instance
+### Accessing the User instance and Stateless authentication
 
 You can easily access the User instance from the belongsTo() relationship of the ApiKey model to the User class. With this, we can implement API based authentication with the following as an example. 
 
