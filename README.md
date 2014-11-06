@@ -172,3 +172,102 @@ You should get the following response:
         }
     }
 
+### Accessing the User instance
+
+You can easily access the User instance from the belongsTo() relationship of the ApiKey model to the User class. With this, we can implement API based authentication with the following as an example. 
+
+Note that while we have utilized [Confide](https://github.com/zizaco/confide) for handling the credential checking, you can have your own way of having this done (like using the native Laravel Auth class, or [Sentry](https://github.com/cartalyst/sentry) for that matter).
+
+```
+<?php
+
+
+namespace api\v1;
+
+use Chrisbjr\ApiGuard\ApiGuardController;
+use Chrisbjr\ApiGuard\ApiKey;
+use Chrisbjr\ApiGuard\Transformers\ApiKeyTransformer;
+use Confide;
+use Input;
+use User;
+use Validator;
+
+class UserApiController extends ApiGuardController
+{
+    protected $apiMethods = array(
+        'authenticate'   => array(
+            'keyAuthentication' => false
+        ),
+        'deauthenticate' => array(
+            'keyAuthentication' => true
+        )
+    );
+
+    public function authenticate() {
+        $credentials['username'] = Input::json('username');
+        $credentials['password'] = Input::json('password');
+
+        $validator = Validator::make(array(
+                'username' => $credentials['username'],
+                'password' => $credentials['password']
+            ),
+            array(
+                'username' => 'required|max:255',
+                'password' => 'required|max:255'
+            )
+        );
+
+        if ($validator->fails()) {
+            return $this->response->errorWrongArgsValidator($validator);
+        }
+
+        try {
+            $user = User::whereUsername($credentials['username'])->first();
+            $credentials['email'] = $user->email;
+        } catch (\ErrorException $e) {
+            return $this->response->errorUnauthorized("Your username or password is incorrect");
+        }
+
+        if (Confide::logAttempt($credentials) == false) {
+            return $this->response->errorUnauthorized("Your username or password is incorrect");
+        }
+
+        // We have validated this user
+        // Assign an API key for this session
+        $apiKey = ApiKey::where('user_id', '=', $user->id)->first();
+        if (!isset($apiKey)) {
+            $apiKey                = new ApiKey;
+            $apiKey->user_id       = $user->id;
+            $apiKey->key           = $apiKey->generateKey();
+            $apiKey->level         = 5;
+            $apiKey->ignore_limits = 0;
+        } else {
+            $apiKey->generateKey();
+        }
+
+        if (!$apiKey->save()) {
+            return $this->response->errorInternalError("Failed to create an API key. Please try again.");
+        }
+
+        // We have an API key.. i guess we only need to return that.
+        return $this->response->withItem($apiKey, new ApiKeyTransformer);
+    }
+
+    public function deauthenticate() {
+        if (empty($this->apiKey)) {
+            return $this->response->errorUnauthorized("There is no such user to deauthenticate.");
+        }
+
+        $this->apiKey->delete();
+
+        return $this->response->withArray([
+            'ok' => [
+                'code' => 'SUCCESSFUL',
+                'http_code' => 200,
+                'message' => 'User was successfuly deauthenticated'
+            ]
+        ]);
+    }
+}
+
+```
