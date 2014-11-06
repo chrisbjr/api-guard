@@ -196,27 +196,24 @@ use Validator;
 
 class UserApiController extends ApiGuardController
 {
-    protected $apiMethods = array(
-        'authenticate'   => array(
+    protected $apiMethods = [
+        'authenticate' => [
             'keyAuthentication' => false
-        ),
-        'deauthenticate' => array(
-            'keyAuthentication' => true
-        )
-    );
+        ]
+    ];
 
     public function authenticate() {
         $credentials['username'] = Input::json('username');
         $credentials['password'] = Input::json('password');
 
-        $validator = Validator::make(array(
+        $validator = Validator::make([
                 'username' => $credentials['username'],
                 'password' => $credentials['password']
-            ),
-            array(
+            ],
+            [
                 'username' => 'required|max:255',
                 'password' => 'required|max:255'
-            )
+            ]
         );
 
         if ($validator->fails()) {
@@ -224,7 +221,7 @@ class UserApiController extends ApiGuardController
         }
 
         try {
-            $user = User::whereUsername($credentials['username'])->first();
+            $user                 = User::whereUsername($credentials['username'])->first();
             $credentials['email'] = $user->email;
         } catch (\ErrorException $e) {
             return $this->response->errorUnauthorized("Your username or password is incorrect");
@@ -254,10 +251,10 @@ class UserApiController extends ApiGuardController
         // We have an API key.. i guess we only need to return that.
         return $this->response->withItem($apiKey, new ApiKeyTransformer);
     }
-    
+
     public function getUserDetails() {
         $user = $this->apiKey->user;
-        
+
         return isset($user) ? $user : $this->response->errorNotFound();
     }
 
@@ -270,12 +267,11 @@ class UserApiController extends ApiGuardController
 
         return $this->response->withArray([
             'ok' => [
-                'code' => 'SUCCESSFUL',
+                'code'      => 'SUCCESSFUL',
                 'http_code' => 200,
-                'message' => 'User was successfuly deauthenticated'
+                'message'   => 'User was successfuly deauthenticated'
             ]
         ]);
     }
 }
-
 ```
