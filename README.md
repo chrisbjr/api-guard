@@ -97,7 +97,7 @@ Basic usage of ApiGuard is to create a controller and extend that class to use t
     class BooksController extends ApiGuardController
     {
         protected $apiMethods = [
-            'index' => [
+            'all' => [
                 'keyAuthentication' => true,
                 'level' => 1,
                 'limits' => [
@@ -112,15 +112,27 @@ Basic usage of ApiGuard is to create a controller and extend that class to use t
                         'limit' => 1000
                     ]
                 ]
-
+            ],
+            
+            'show' => [
+                'keyAuthentication' => false
             ]
         ];
 
-        public function index()
+        public function all()
         {
             $books = Book::all();
 
             return $this->response->withCollection($books, new BookTransformer);
+        }
+        
+        public function show($id)
+        {
+            try {
+                $book = Book::findOrFail($id);
+            } catch (\ModelNotFoundException $e) {
+                return $this->response->errorNotFound();
+            }
         }
     }
 
