@@ -254,6 +254,12 @@ class UserApiController extends ApiGuardController
         // We have an API key.. i guess we only need to return that.
         return $this->response->withItem($apiKey, new ApiKeyTransformer);
     }
+    
+    public function getUserDetails() {
+        $user = $this->apiKey->user;
+        
+        return isset($user) ? $user : $this->response->errorNotFound();
+    }
 
     public function deauthenticate() {
         if (empty($this->apiKey)) {
