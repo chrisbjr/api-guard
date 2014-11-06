@@ -130,6 +130,8 @@ Basic usage of ApiGuard is to create a controller and extend that class to use t
         {
             try {
                 $book = Book::findOrFail($id);
+                
+                return $this->response->withItem($book, new BookTransformer);
             } catch (ModelNotFoundException $e) {
                 return $this->response->errorNotFound();
             }
