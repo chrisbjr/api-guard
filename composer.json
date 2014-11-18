@@ -33,5 +33,5 @@
             "Chrisbjr\\ApiGuard\\": "src/Chrisbjr/ApiGuard"
         }
     },
-    "minimum-stability": "stable"
+    "minimum-stability": "dev"
 }
