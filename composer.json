@@ -21,7 +21,7 @@
         "illuminate/support": "4.2.*",
         "illuminate/database": "*",
         "league/fractal": "0.9.1",
-        "ellipsesynergie/api-response": "0.7.*"
+        "ellipsesynergie/api-response": "0.7.0"
     },
     "autoload": {
         "classmap": [
