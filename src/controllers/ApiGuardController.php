@@ -21,7 +21,7 @@ class ApiGuardController extends Controller
     protected $apiMethods;
 
     /**
-     * @var \Illuminate\Database\Eloquent\Model|null|static
+     * @var ApiKey|null|static
      */
     public $apiKey = null;
 
