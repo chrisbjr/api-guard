@@ -29,8 +29,8 @@
             "src/controllers",
             "src/models"
         ],
-        "psr-0": {
-            "Chrisbjr\\ApiGuard\\": "src/"
+        "psr-4": {
+            "Chrisbjr\\ApiGuard\\": "src/Chrisbjr/ApiGuard"
         }
     },
     "minimum-stability": "stable"
