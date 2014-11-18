@@ -20,7 +20,7 @@
         "php": ">=5.4.0",
         "illuminate/support": "4.2.*",
         "illuminate/database": "*",
-        "league/fractal": "0.9.*",
+        "league/fractal": "0.9.1",
         "ellipsesynergie/api-response": "0.7.*"
     },
     "autoload": {
