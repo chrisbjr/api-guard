@@ -1,5 +1,6 @@
-<?php namespace Chrisbjr\ApiGuard;
+<?php namespace Chrisbjr\ApiGuard\Models;
 
+use Carbon\Carbon;
 use Config;
 use Eloquent;
 
@@ -11,6 +12,8 @@ use Eloquent;
  * @property string key
  * @property int level
  * @property int ignore_limits
+ * @property Carbon created_at
+ * @property Carbon updated_at
  */
 class ApiKey extends Eloquent
 {

@@ -1,15 +1,16 @@
-<?php namespace Chrisbjr\ApiGuard\Controllers;
+<?php
 
-use Chrisbjr\ApiGuard\Models\ApiKey;
-use Chrisbjr\ApiGuard\Models\ApiLog;
+namespace Chrisbjr\ApiGuard;
+
 use Controller;
-use Input;
 use Route;
+use Request;
 use Config;
 use Log;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Input;
 use EllipseSynergie\ApiResponse\Laravel\Response;
 use League\Fractal\Manager;
-use Str;
 
 class ApiGuardController extends Controller
 {
@@ -20,17 +21,17 @@ class ApiGuardController extends Controller
     protected $apiMethods;
 
     /**
-     * @var ApiKey|null
+     * @var ApiKey|null|static
      */
     public $apiKey = null;
 
     /**
-     * @var Response
+     * @var \EllipseSynergie\ApiResponse\Laravel\Response
      */
     public $response;
 
     /**
-     * @var Manager
+     * @var \League\Fractal\Manager
      */
     public $manager;
 
@@ -41,7 +42,7 @@ class ApiGuardController extends Controller
             // Let's instantiate the response class first
             $this->manager = new Manager;
 
-            $this->manager->parseIncludes(Input::get(Config::get('api-guard::includeKeyword', 'include'), 'include'));
+            $this->manager->parseIncludes(Input::get(Config::get('api-guard::includeKeyword', 'include'), array()));
 
             $this->response = new Response($this->manager);
 
@@ -175,7 +176,7 @@ class ApiGuardController extends Controller
 
                                 if ($apiLogCount >= $methodLimit) {
                                     Log::warning("[Chrisbjr/ApiGuard] The API has reached the method limit of {$methodLimit} in the following route: " . Route::currentRouteAction());
-                                    return $this->response->errorUnwillingToProcess('The limit for using this API method has been reached');
+                                    return $this->response->setStatusCode(429)->withError('The limit for using this API method has been reached', 'GEN-LIMIT-REACHED');
                                 }
                             }
                         }
@@ -194,7 +195,6 @@ class ApiGuardController extends Controller
                 $apiLog->ip_address = $request->getClientIp();
                 $apiLog->save();
             }
-
         }, ['apiMethods' => $this->apiMethods]);
     }
 

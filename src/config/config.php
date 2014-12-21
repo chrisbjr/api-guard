@@ -35,7 +35,7 @@ return array(
     |
     */
 
-    'keyName'              => 'Authorization',
+    'keyName'              => 'X-Authorization',
 
     /*
     |--------------------------------------------------------------------------
