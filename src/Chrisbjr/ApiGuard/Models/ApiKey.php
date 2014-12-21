@@ -1,18 +1,31 @@
-<?php
-namespace Chrisbjr\ApiGuard;
+<?php namespace Chrisbjr\ApiGuard;
+
+use Config;
+use Eloquent;
 
 /**
- * Class ApiKey
+ * ApiKey Eloquent Model
+ *
+ * @property int id
+ * @property int user_id
+ * @property string key
+ * @property int level
+ * @property int ignore_limits
  */
-class ApiKey extends \Eloquent
+class ApiKey extends Eloquent
 {
     protected $table = 'api_keys';
 
     public function user()
     {
-        return $this->belongsTo('User');
+        return $this->belongsTo(Config::get('auth.model'));
     }
 
+    /**
+     * A sure method to generate a unique API key
+     *
+     * @return string
+     */
     public function generateKey()
     {
         do {
@@ -24,6 +37,12 @@ class ApiKey extends \Eloquent
         return $newKey;
     }
 
+    /**
+     * Checks whether a key exists in the database or not
+     *
+     * @param $key
+     * @return bool
+     */
     private function keyExists($key)
     {
         $apiKeyCount = ApiKey::where('key', '=', $key)->limit(1)->count();
