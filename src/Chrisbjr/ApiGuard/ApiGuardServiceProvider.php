@@ -23,6 +23,11 @@ class ApiGuardServiceProvider extends ServiceProvider
 
         $this->app->register('EllipseSynergie\ApiResponse\Laravel\ResponseServiceProvider');
 
+        $this->commands([
+            'Chrisbjr\ApiGuard\Commands\GenerateApiKeyCommand',
+            'Chrisbjr\ApiGuard\Commands\DeleteApiKeyCommand',
+        ]);
+
         require_once __DIR__ . '/../../routes.php';
     }
 
