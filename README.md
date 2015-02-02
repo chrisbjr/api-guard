@@ -13,6 +13,8 @@ I've been looking for an equivalent for Laravel but did not find any so this is 
 
 ### Required setup
 
+NOTE: Currently, ApiGuard will only work for Laravel 4.2.*.
+
 In the `require` key of `composer.json` file add the following
 
     "chrisbjr/api-guard": "0.*"
