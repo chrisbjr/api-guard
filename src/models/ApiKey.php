@@ -10,7 +10,7 @@ class ApiKey extends \Eloquent
 
     public function user()
     {
-        return $this->belongsTo('User');
+        return $this->belongsTo(\Config::get('auth.model'));
     }
 
     public function generateKey()
