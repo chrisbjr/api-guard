@@ -106,6 +106,8 @@ class ApiGuardController extends Controller
                 }
             }
 
+            $apiLog = App::make(Config::get('api-guard::apiLogModel'));
+
             // Then check the limits of this method
             if ( ! empty($apiMethods[$method]['limits'])) {
 
@@ -135,8 +137,7 @@ class ApiGuardController extends Controller
                                 Log::warning("[Chrisbjr/ApiGuard] You have specified an invalid key increment time. This value can be any value accepted by PHP's strtotime() method");
                             } else {
                                 // Count the number of requests for this method using this api key
-                                $apiLog = App::make(Config::get('api-guard::apiLogModel'));
-                                $apiLogCount = $apiLog->countLog($this->apiKey->id, Route::currentRouteAction(), $request->getMethod(), $keyIncrementTime);
+                                $apiLogCount = $apiLog->countApiKeyRequests($this->apiKey->id, Route::currentRouteAction(), $request->getMethod(), $keyIncrementTime);
 
                                 if ($apiLogCount >= $keyLimit) {
                                     Log::warning("[Chrisbjr/ApiGuard] The API key ID#{$this->apiKey->id} has reached the limit of {$keyLimit} in the following route: " . Route::currentRouteAction());
@@ -165,11 +166,7 @@ class ApiGuardController extends Controller
                                 Log::warning("[Chrisbjr/ApiGuard] You have specified an invalid method increment time. This value can be any value accepted by PHP's strtotime() method");
                             } else {
                                 // Count the number of requests for this method
-                                $apiLogCount = ApiLog::where('route', '=', Route::currentRouteAction())
-                                    ->where('method', '=', $request->getMethod())
-                                    ->where('created_at', '>=', date('Y-m-d H:i:s', $methodIncrementTime))
-                                    ->where('created_at', '<=', date('Y-m-d H:i:s'))
-                                    ->count();
+                                $apiLogCount = $apiLog->countMethodRequests(Route::currentRouteAction(), $request->getMethod(), $methodIncrementTime);
 
                                 if ($apiLogCount >= $methodLimit) {
                                     Log::warning("[Chrisbjr/ApiGuard] The API has reached the method limit of {$methodLimit} in the following route: " . Route::currentRouteAction());
@@ -184,7 +181,7 @@ class ApiGuardController extends Controller
 
             if (Config::get('api-guard::logging') && $keyAuthentication == true) {
                 // Log this API request
-                $apiLog = new ApiLog;
+                $apiLog = App::make(Config::get('api-guard::apiLogModel'));
                 $apiLog->api_key_id = $this->apiKey->id;
                 $apiLog->route = Route::currentRouteAction();
                 $apiLog->method = $request->getMethod();

@@ -23,10 +23,19 @@ class ApiLog extends Eloquent
         return $this->hasOne(Config::get('api-guard::model'));
     }
 
-    public function countLog($apiKeyId, $routeAction, $method, $keyIncrementTime)
+    public function countApiKeyRequests($apiKeyId, $routeAction, $method, $keyIncrementTime)
     {
         return self::where('api_key_id', '=', $apiKeyId)
             ->where('route', '=', $routeAction)
+            ->where('method', '=', $method)
+            ->where('created_at', '>=', date('Y-m-d H:i:s', $keyIncrementTime))
+            ->where('created_at', '<=', date('Y-m-d H:i:s'))
+            ->count();
+    }
+
+    public function countMethodRequests($routeAction, $method, $keyIncrementTime)
+    {
+        return self::where('route', '=', $routeAction)
             ->where('method', '=', $method)
             ->where('created_at', '>=', date('Y-m-d H:i:s', $keyIncrementTime))
             ->where('created_at', '<=', date('Y-m-d H:i:s'))
