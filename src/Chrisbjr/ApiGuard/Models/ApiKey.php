@@ -48,7 +48,7 @@ class ApiKey extends Eloquent
      */
     private function keyExists($key)
     {
-        $apiKeyCount = ApiKey::where('key', '=', $key)->limit(1)->count();
+        $apiKeyCount = self::where('key', '=', $key)->limit(1)->count();
 
         if ($apiKeyCount > 0) return true;
 

@@ -1,6 +1,7 @@
 <?php namespace Chrisbjr\ApiGuard\Models;
 
 use Eloquent;
+use Config;
 
 /**
  * @property int api_key_id
@@ -11,6 +12,7 @@ use Eloquent;
  */
 class ApiLog extends Eloquent
 {
+
     protected $table = 'api_logs';
 
     /**
@@ -18,7 +20,17 @@ class ApiLog extends Eloquent
      */
     public function apiKey()
     {
-        return $this->hasOne('ApiKey');
+        return $this->hasOne(Config::get('api-guard::model'));
+    }
+
+    public function countLog($apiKeyId, $routeAction, $method, $keyIncrementTime)
+    {
+        return self::where('api_key_id', '=', $apiKeyId)
+            ->where('route', '=', $routeAction)
+            ->where('method', '=', $method)
+            ->where('created_at', '>=', date('Y-m-d H:i:s', $keyIncrementTime))
+            ->where('created_at', '<=', date('Y-m-d H:i:s'))
+            ->count();
     }
 
 }

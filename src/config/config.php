@@ -24,7 +24,19 @@ return array(
     |
     */
 
-    'model'              => 'Chrisbjr\ApiGuard\Models\ApiKey',
+    'model'                => 'Chrisbjr\ApiGuard\Models\ApiKey',
+
+    /*
+    |--------------------------------------------------------------------------
+    | ApiLog model
+    |--------------------------------------------------------------------------
+    |
+    | If you're extending the ApiLog model, define the namespace of the class
+    | here.
+    |
+    */
+
+    'apiLogModel'          => 'Chrisbjr\ApiGuard\Models\ApiLog',
 
     /*
     |--------------------------------------------------------------------------

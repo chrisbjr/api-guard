@@ -49,7 +49,7 @@ class ApiGuardController extends Controller
             // loop through any before filters and pull out $apiMethods in the controller
             $beforeFilters = $this->getBeforeFilters();
             foreach ($beforeFilters as $filter) {
-                if (!empty($filter['options']['apiMethods'])) {
+                if ( ! empty($filter['options']['apiMethods'])) {
                     $apiMethods = $filter['options']['apiMethods'];
                 }
             }
@@ -99,7 +99,7 @@ class ApiGuardController extends Controller
 
                 // API key exists
                 // Check level of API
-                if (!empty($apiMethods[$method]['level'])) {
+                if ( ! empty($apiMethods[$method]['level'])) {
                     if ($this->apiKey->level < $apiMethods[$method]['level']) {
                         return $this->response->errorForbidden();
                     }
@@ -107,7 +107,7 @@ class ApiGuardController extends Controller
             }
 
             // Then check the limits of this method
-            if (!empty($apiMethods[$method]['limits'])) {
+            if ( ! empty($apiMethods[$method]['limits'])) {
 
                 if (Config::get('api-guard::logging') === false) {
                     Log::warning("[Chrisbjr/ApiGuard] You specified a limit in the $method method but API logging needs to be enabled in the configuration for this to work.");
@@ -116,18 +116,18 @@ class ApiGuardController extends Controller
                 $limits = $apiMethods[$method]['limits'];
 
                 // We get key level limits first
-                if ($this->apiKey != null && !empty($limits['key'])) {
+                if ($this->apiKey != null && ! empty($limits['key'])) {
 
                     Log::info("key limits found");
 
-                    $keyLimit = (!empty($limits['key']['limit'])) ? $limits['key']['limit'] : 0;
+                    $keyLimit = ( ! empty($limits['key']['limit'])) ? $limits['key']['limit'] : 0;
                     if ($keyLimit == 0 || is_integer($keyLimit) == false) {
                         Log::warning("[Chrisbjr/ApiGuard] You defined a key limit to the " . Route::currentRouteAction() . " route but you did not set a valid number for the limit variable.");
                     } else {
-                        if (!$this->apiKey->ignore_limits) {
+                        if ( ! $this->apiKey->ignore_limits) {
                             // This means the apikey is not ignoring the limits
 
-                            $keyIncrement = (!empty($limits['key']['increment'])) ? $limits['key']['increment'] : Config::get('api-guard::keyLimitIncrement');
+                            $keyIncrement = ( ! empty($limits['key']['increment'])) ? $limits['key']['increment'] : Config::get('api-guard::keyLimitIncrement');
 
                             $keyIncrementTime = strtotime('-' . $keyIncrement);
 
@@ -135,12 +135,8 @@ class ApiGuardController extends Controller
                                 Log::warning("[Chrisbjr/ApiGuard] You have specified an invalid key increment time. This value can be any value accepted by PHP's strtotime() method");
                             } else {
                                 // Count the number of requests for this method using this api key
-                                $apiLogCount = ApiLog::where('api_key_id', '=', $this->apiKey->id)
-                                    ->where('route', '=', Route::currentRouteAction())
-                                    ->where('method', '=', $request->getMethod())
-                                    ->where('created_at', '>=', date('Y-m-d H:i:s', $keyIncrementTime))
-                                    ->where('created_at', '<=', date('Y-m-d H:i:s'))
-                                    ->count();
+                                $apiLog = App::make(Config::get('api-guard::apiLogModel'));
+                                $apiLogCount = $apiLog->countLog($this->apiKey->id, Route::currentRouteAction(), $request->getMethod(), $keyIncrementTime);
 
                                 if ($apiLogCount >= $keyLimit) {
                                     Log::warning("[Chrisbjr/ApiGuard] The API key ID#{$this->apiKey->id} has reached the limit of {$keyLimit} in the following route: " . Route::currentRouteAction());
@@ -152,8 +148,8 @@ class ApiGuardController extends Controller
                 }
 
                 // Then the overall method limits
-                if (!empty($limits['method'])) {
-                    $methodLimit = (!empty($limits['method']['limit'])) ? $limits['method']['limit'] : 0;
+                if ( ! empty($limits['method'])) {
+                    $methodLimit = ( ! empty($limits['method']['limit'])) ? $limits['method']['limit'] : 0;
                     if ($methodLimit == 0 || is_integer($methodLimit) == false) {
                         Log::warning("[Chrisbjr/ApiGuard] You defined a method limit to the " . Route::currentRouteAction() . " route but you did not set a valid number for the limit variable.");
                     } else {
@@ -161,7 +157,7 @@ class ApiGuardController extends Controller
                             // then we skip this
                         } else {
 
-                            $methodIncrement = (!empty($limits['method']['increment'])) ? $limits['method']['increment'] : Config::get('api-guard::keyLimitIncrement');
+                            $methodIncrement = ( ! empty($limits['method']['increment'])) ? $limits['method']['increment'] : Config::get('api-guard::keyLimitIncrement');
 
                             $methodIncrementTime = strtotime('-' . $methodIncrement);
 
