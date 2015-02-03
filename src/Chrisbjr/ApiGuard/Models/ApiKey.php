@@ -54,4 +54,9 @@ class ApiKey extends Eloquent
 
         return false;
     }
+
+    public function findApiKey($key) {
+        return self::where('key', '=', $key)->first();
+    }
+
 }

@@ -1,6 +1,6 @@
 <?php namespace Chrisbjr\ApiGuard\Controllers;
 
-use Chrisbjr\ApiGuard\Models\ApiKey;
+use App;
 use Chrisbjr\ApiGuard\Models\ApiLog;
 use Controller;
 use Input;
@@ -20,7 +20,7 @@ class ApiGuardController extends Controller
     protected $apiMethods;
 
     /**
-     * @var ApiKey|null
+     * @var null
      */
     public $apiKey = null;
 
@@ -88,7 +88,9 @@ class ApiGuardController extends Controller
                     return $this->response->errorUnauthorized();
                 }
 
-                $this->apiKey = ApiKey::where('key', '=', $key)->first();
+                $apiKey = App::make(Config::get('api-guard::model'));
+
+                $this->apiKey = $apiKey->findApiKey($key);
 
                 if (empty($this->apiKey) || $this->apiKey->exists() == false) {
                     // ApiKey not found
