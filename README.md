@@ -150,11 +150,11 @@ You can access the above controller by creating a basic route in your `app/route
     Route::get('api/v1/books', 'BooksController@all');
     Route::get('api/v1/books/{id}', 'BooksController@show');
 
-You will need to use your API key and put it in the header to access it. By default, the header value is using the `Authorization` parameter. You can change this in the config file.
+You will need to use your API key and put it in the header to access it. By default, the header value is using the `X-Authorization` parameter. You can change this in the config file.
 
 Try calling this route using `curl`
 
-     curl --header "Authorization: 2ed9d72e5596800bf805ca1c735e446df72019ef" http://localhost:8000/api/v1/books
+     curl --header "X-Authorization: 2ed9d72e5596800bf805ca1c735e446df72019ef" http://localhost:8000/api/v1/books
 
 You should get the following response:
 
