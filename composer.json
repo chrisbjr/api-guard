@@ -20,7 +20,7 @@
         "php": ">=5.4.0",
         "illuminate/support": "4.2.*",
         "illuminate/database": "*",
-        "ellipsesynergie/api-response": "~0.7"
+        "ellipsesynergie/api-response": "0.8.*"
     },
     "autoload": {
         "classmap": [
