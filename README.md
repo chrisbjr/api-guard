@@ -1,6 +1,8 @@
 ApiGuard
 ========
 
+[![Join the chat at https://gitter.im/chrisbjr/api-guard](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/chrisbjr/api-guard?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 A simple way of authenticating your APIs with API keys using Laravel. This package uses the following libraries:
 
 - philsturgeon's [Fractal](https://github.com/thephpleague/fractal)
