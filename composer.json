@@ -9,7 +9,7 @@
         "api authentication",
         "laravel"
     ],
-    "homepage": "https://github.com/chrisbjr/ApiGuard",
+    "homepage": "https://github.com/chrisbjr/api-guard",
     "authors": [
         {
             "name": "Chris Bautista",
@@ -18,18 +18,16 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "illuminate/support": "4.2.*",
+        "illuminate/support": "5.0.*",
         "illuminate/database": "*",
-        "ellipsesynergie/api-response": "0.8.*"
+        "ellipsesynergie/api-response": "0.9.*"
     },
     "autoload": {
         "classmap": [
-            "src/migrations",
-            "src/controllers",
-            "src/models"
+            "database"
         ],
         "psr-4": {
-            "Chrisbjr\\ApiGuard\\": "src/Chrisbjr/ApiGuard"
+            "Chrisbjr\\ApiGuard\\": "src"
         }
     },
     "minimum-stability": "stable"
