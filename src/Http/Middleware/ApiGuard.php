@@ -1,6 +1,5 @@
 <?php namespace Chrisbjr\ApiGuard\Http\Middleware;
 
-use Auth;
 use Chrisbjr\ApiGuard\Repositories\ApiKeyRepository;
 use Closure;
 use Config;

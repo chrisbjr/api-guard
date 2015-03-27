@@ -9,7 +9,7 @@ class ApiGuardController extends Controller
 
     public function __construct()
     {
-        $this->middleware('Chrisbjr\ApiGuard\Middleware\ApiGuard');
+        $this->middleware('Chrisbjr\ApiGuard\Http\Middleware\ApiGuard');
     }
 
 }
