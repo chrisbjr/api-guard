@@ -26,7 +26,7 @@ class ApiGuardServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__ . '/../../config/apiguard.php' => config_path('apiguard.php'),
-        ]);
+        ], 'config');
     }
 
     /**
