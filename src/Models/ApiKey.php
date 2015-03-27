@@ -1,20 +1,12 @@
 <?php
 
 namespace Chrisbjr\ApiGuard\Models;
-use Eloquent;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-/**
- * @property int user_id
- * @property string key
- */
-class ApiKey extends Eloquent
+use Chrisbjr\ApiGuard\Repositories\ApiKeyRepository;
+
+class ApiKey extends ApiKeyRepository
 {
 
-    protected $table = 'api_keys';
-
-    use SoftDeletes;
-
-    protected $dates = ['deleted_at'];
+    //
 
 }
