@@ -136,7 +136,7 @@ By default, all the methods in the ApiGuardController will be authenticated. To 
 ```php
 <?php
 
-use Chrisbjr\ApiGuard\ApiGuardController;
+use Chrisbjr\ApiGuard\Controllers\ApiGuardController;
 
 class BooksController extends ApiGuardController
 {
@@ -179,7 +179,7 @@ This will allow you to specify a level for your API key and if the method has a 
 ```php
 <?php
 
-use Chrisbjr\ApiGuard\ApiGuardController;
+use Chrisbjr\ApiGuard\Controllers\ApiGuardController;
 
 class BooksController extends ApiGuardController
 {
@@ -205,7 +205,7 @@ You can limit the rate at which an API key can have access to a particular metho
 ```php
 <?php
 
-use Chrisbjr\ApiGuard\ApiGuardController;
+use Chrisbjr\ApiGuard\Controllers\ApiGuardController;
 
 class BooksController extends ApiGuardController
 {
@@ -237,7 +237,7 @@ There is also an option to limit the request rate for a given method no matter w
 ```php
 <?php
 
-use Chrisbjr\ApiGuard\ApiGuardController;
+use Chrisbjr\ApiGuard\Controllers\ApiGuardController;
 
 class BooksController extends ApiGuardController
 {
@@ -271,8 +271,8 @@ Note that while we have utilized [Confide](https://github.com/zizaco/confide) fo
 ```php
 <?php namespace api\v1;
 
-use Chrisbjr\ApiGuard\ApiGuardController;
-use Chrisbjr\ApiGuard\ApiKey;
+use Chrisbjr\ApiGuard\Controllers\ApiGuardController;
+use Chrisbjr\ApiGuard\Models\ApiKey;
 use Chrisbjr\ApiGuard\Transformers\ApiKeyTransformer;
 use Confide;
 use Input;
