@@ -24,9 +24,7 @@
     },
     "autoload": {
         "classmap": [
-            "src/migrations",
-            "src/controllers",
-            "src/models"
+            "src/migrations"
         ],
         "psr-4": {
             "Chrisbjr\\ApiGuard\\": "src/Chrisbjr/ApiGuard"
