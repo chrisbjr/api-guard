@@ -1,15 +1,18 @@
-<?php namespace Chrisbjr\ApiGuard\Controllers;
+<?php
+
+namespace Chrisbjr\ApiGuard\Http\Controllers;
 
 use App;
-use Chrisbjr\ApiGuard\Models\ApiLog;
-use Controller;
-use Input;
-use Route;
+use Chrisbjr\ApiGuard\Repositories\ApiKeyRepository;
 use Config;
-use Log;
 use EllipseSynergie\ApiResponse\Laravel\Response;
+use Exception;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Str;
+use Input;
 use League\Fractal\Manager;
-use Str;
+use Log;
+use Route;
 
 class ApiGuardController extends Controller
 {
@@ -20,7 +23,7 @@ class ApiGuardController extends Controller
     protected $apiMethods;
 
     /**
-     * @var null
+     * @var ApiKeyRepository
      */
     public $apiKey = null;
 
@@ -41,13 +44,14 @@ class ApiGuardController extends Controller
             // Let's instantiate the response class first
             $this->manager = new Manager;
 
-            $this->manager->parseIncludes(Input::get(Config::get('api-guard::includeKeyword', 'include'), 'include'));
+            $this->manager->parseIncludes(Input::get(Config::get('apiguard.includeKeyword', 'include'), 'include'));
 
             $this->response = new Response($this->manager);
 
-            // api-guard might not be the only before filter on the controller
+            // apiguard might not be the only before filter on the controller
             // loop through any before filters and pull out $apiMethods in the controller
             $beforeFilters = $this->getBeforeFilters();
+
             foreach ($beforeFilters as $filter) {
                 if ( ! empty($filter['options']['apiMethods'])) {
                     $apiMethods = $filter['options']['apiMethods'];
@@ -59,6 +63,7 @@ class ApiGuardController extends Controller
 
             // Let's get the method
             Str::parseCallback(Route::currentRouteAction(), null);
+
             $routeArray = Str::parseCallback(Route::currentRouteAction(), null);
 
             if (last($routeArray) == null) {
@@ -70,17 +75,18 @@ class ApiGuardController extends Controller
 
             // We should check if key authentication is enabled for this method
             $keyAuthentication = true;
+
             if (isset($apiMethods[$method]['keyAuthentication']) && $apiMethods[$method]['keyAuthentication'] === false) {
                 $keyAuthentication = false;
             }
 
             if ($keyAuthentication === true) {
 
-                $key = $request->header(Config::get('api-guard::keyName'));
+                $key = $request->header(Config::get('apiguard.keyName', 'X-Authorization'));
 
                 if (empty($key)) {
                     // Try getting the key from elsewhere
-                    $key = Input::get(Config::get('api-guard::keyName'));
+                    $key = Input::get(Config::get('apiguard.keyName', 'X-Authorization'));
                 }
 
                 if (empty($key)) {
@@ -88,12 +94,17 @@ class ApiGuardController extends Controller
                     return $this->response->errorUnauthorized();
                 }
 
-                $apiKey = App::make(Config::get('api-guard::model'));
+                $apiKeyModel = App::make(Config::get('apiguard.model', 'Chrisbjr\ApiGuard\Models\ApiKey'));
 
-                $this->apiKey = $apiKey->findApiKey($key);
+                if ( ! $apiKeyModel instanceof ApiKeyRepository) {
+                    Log::error('[Chrisbjr/ApiGuard] You ApiKey model should be an instance of ApiKeyRepository.');
+                    $exception = new Exception("You ApiKey model should be an instance of ApiKeyRepository.");
+                    throw($exception);
+                }
 
-                if (empty($this->apiKey) || $this->apiKey->exists() == false) {
-                    // ApiKey not found
+                $this->apiKey = $apiKeyModel->getByKey($key);
+
+                if (empty($this->apiKey)) {
                     return $this->response->errorUnauthorized();
                 }
 
@@ -106,12 +117,12 @@ class ApiGuardController extends Controller
                 }
             }
 
-            $apiLog = App::make(Config::get('api-guard::apiLogModel'));
+            $apiLog = App::make(Config::get('apiguard.apiLogModel', 'Chrisbjr\ApiGuard\Models\ApiLog'));
 
             // Then check the limits of this method
             if ( ! empty($apiMethods[$method]['limits'])) {
 
-                if (Config::get('api-guard::logging') === false) {
+                if (Config::get('apiguard.logging', true) === false) {
                     Log::warning("[Chrisbjr/ApiGuard] You specified a limit in the $method method but API logging needs to be enabled in the configuration for this to work.");
                 }
 
@@ -120,17 +131,14 @@ class ApiGuardController extends Controller
                 // We get key level limits first
                 if ($this->apiKey != null && ! empty($limits['key'])) {
 
-                    Log::info("key limits found");
-
                     $keyLimit = ( ! empty($limits['key']['limit'])) ? $limits['key']['limit'] : 0;
+
                     if ($keyLimit == 0 || is_integer($keyLimit) == false) {
                         Log::warning("[Chrisbjr/ApiGuard] You defined a key limit to the " . Route::currentRouteAction() . " route but you did not set a valid number for the limit variable.");
                     } else {
                         if ( ! $this->apiKey->ignore_limits) {
                             // This means the apikey is not ignoring the limits
-
-                            $keyIncrement = ( ! empty($limits['key']['increment'])) ? $limits['key']['increment'] : Config::get('api-guard::keyLimitIncrement');
-
+                            $keyIncrement = ( ! empty($limits['key']['increment'])) ? $limits['key']['increment'] : Config::get('apiguard.keyLimitIncrement', '1 hour');
                             $keyIncrementTime = strtotime('-' . $keyIncrement);
 
                             if ($keyIncrementTime == false) {
@@ -150,7 +158,9 @@ class ApiGuardController extends Controller
 
                 // Then the overall method limits
                 if ( ! empty($limits['method'])) {
+
                     $methodLimit = ( ! empty($limits['method']['limit'])) ? $limits['method']['limit'] : 0;
+
                     if ($methodLimit == 0 || is_integer($methodLimit) == false) {
                         Log::warning("[Chrisbjr/ApiGuard] You defined a method limit to the " . Route::currentRouteAction() . " route but you did not set a valid number for the limit variable.");
                     } else {
@@ -158,8 +168,7 @@ class ApiGuardController extends Controller
                             // then we skip this
                         } else {
 
-                            $methodIncrement = ( ! empty($limits['method']['increment'])) ? $limits['method']['increment'] : Config::get('api-guard::keyLimitIncrement');
-
+                            $methodIncrement = ( ! empty($limits['method']['increment'])) ? $limits['method']['increment'] : Config::get('apiguard.keyLimitIncrement', '1 hour');
                             $methodIncrementTime = strtotime('-' . $methodIncrement);
 
                             if ($methodIncrementTime == false) {
@@ -177,11 +186,11 @@ class ApiGuardController extends Controller
                     }
                 }
             }
-            // End of cheking limits
 
-            if (Config::get('api-guard::logging') && $keyAuthentication == true) {
+            // End of cheking limits
+            if (Config::get('apiguard.logging', true) && $keyAuthentication == true) {
                 // Log this API request
-                $apiLog = App::make(Config::get('api-guard::apiLogModel'));
+                $apiLog = App::make(Config::get('apiguard.apiLogModel', 'Chrisbjr\ApiGuard\Models\ApiLog'));
                 $apiLog->api_key_id = $this->apiKey->id;
                 $apiLog->route = Route::currentRouteAction();
                 $apiLog->method = $request->getMethod();

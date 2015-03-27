@@ -11,35 +11,51 @@ A simple way of authenticating your APIs with API keys using Laravel. This packa
 The concept for managing API keys is also taken from Phil Sturgeon's [codeigniter-restserver](https://github.com/philsturgeon/codeigniter-restserver).
 I've been looking for an equivalent for Laravel but did not find any so this is an implementation for that.
 
+## Laravel 5 is finally supported!
+
+Various versions of api-guard:
+
+**Laravel 5.0.x**: `2.0.*`
+
+**Laravel 4.2.x**: [`1.0`](https://github.com/chrisbjr/api-guard/tree/v1.0) (Recently updated version for Laravel 4. Please note that there are namespace changes here)
+
+**Laravel 4.2.x**: [`0.*`](https://github.com/chrisbjr/api-guard/tree/v0.7) (The version that most of you are using)
+
 ## Quick start
 
-### Laravel 4.2.x
+### Laravel 5.0.x
 
-In the `require` key of `composer.json` file add the following
+In the `require` key of your `composer.json` file add the following
 
-    "chrisbjr/api-guard": "1.0.*"
+    "chrisbjr/api-guard": "2.0.*"
 
 Run the Composer update comand
 
     $ composer update
 
-In your `config/app.php` add `'Chrisbjr\ApiGuard\ApiGuardServiceProvider'` to the end of the `providers` array
+In your `config/app.php` add `Chrisbjr\ApiGuard\Providers\ApiGuardServiceProvider` to the end of the `providers` array
 
 ```php
 'providers' => array(
 
-    'Illuminate\Foundation\Providers\ArtisanServiceProvider',
-    'Illuminate\Auth\AuthServiceProvider',
     ...
-    'Chrisbjr\ApiGuard\ApiGuardServiceProvider',
+    'Chrisbjr\ApiGuard\Providers\ApiGuardServiceProvider',
 ),
 ```
 
-Now generate the api-guard migration (make sure you have your database configuration set up correctly):
+Now publish the migration and configuration files for api-guard:
 
-    $ php artisan migrate --package="chrisbjr/api-guard"
+    $ php artisan vendor:publish --provider="Chrisbjr\ApiGuard\Providers\ApiGuardServiceProvider"
+    
+Then run the migration:
+
+    $ php artisan migrate
 
 It will setup two tables - api_keys and api_logs.
+
+### Laravel 4.2.x
+
+Note: Documentation for use with Laravel 4.2.x differs from Laravel 5.0.x. Please refer to the README [here](https://github.com/chrisbjr/api-guard/tree/v1.0). If you are using version `0.*` you can find the README [here](https://github.com/chrisbjr/api-guard/tree/v0.7)
 
 ### Generating your first API key
 
@@ -59,10 +75,12 @@ To generate an API key that is linked to a user, you can do the following:
 
 Basic usage of ApiGuard is to create a controller and extend that class to use the `ApiGuardController`.
 
+Note: The namespace of the `ApiGuardController` differs from previous versions.
+
 ```php
 <?php
 
-use Chrisbjr\ApiGuard\ApiGuardController;
+use Chrisbjr\ApiGuard\Http\Controllers\ApiGuardController;
 
 class BooksController extends ApiGuardController
 {
@@ -77,11 +95,15 @@ class BooksController extends ApiGuardController
     public function show($id)
     {
         try {
+        
             $book = Book::findOrFail($id);
             
             return $this->response->withItem($book, new BookTransformer);
+            
         } catch (ModelNotFoundException $e) {
+        
             return $this->response->errorNotFound();
+            
         }
     }
 
@@ -136,7 +158,7 @@ By default, all the methods in the ApiGuardController will be authenticated. To 
 ```php
 <?php
 
-use Chrisbjr\ApiGuard\Controllers\ApiGuardController;
+use Chrisbjr\ApiGuard\Http\Controllers\ApiGuardController;
 
 class BooksController extends ApiGuardController
 {
@@ -147,23 +169,7 @@ class BooksController extends ApiGuardController
         ],
     ];
 
-    public function all()
-    {
-        $books = Book::all();
-
-        return $this->response->withCollection($books, new BookTransformer);
-    }
-    
-    public function show($id)
-    {
-        try {
-            $book = Book::findOrFail($id);
-            
-            return $this->response->withItem($book, new BookTransformer);
-        } catch (ModelNotFoundException $e) {
-            return $this->response->errorNotFound();
-        }
-    }
+    ...
 
 }
 ```
@@ -179,7 +185,7 @@ This will allow you to specify a level for your API key and if the method has a 
 ```php
 <?php
 
-use Chrisbjr\ApiGuard\Controllers\ApiGuardController;
+use Chrisbjr\ApiGuard\Http\Controllers\ApiGuardController;
 
 class BooksController extends ApiGuardController
 {
@@ -205,7 +211,7 @@ You can limit the rate at which an API key can have access to a particular metho
 ```php
 <?php
 
-use Chrisbjr\ApiGuard\Controllers\ApiGuardController;
+use Chrisbjr\ApiGuard\Http\Controllers\ApiGuardController;
 
 class BooksController extends ApiGuardController
 {
@@ -226,7 +232,7 @@ class BooksController extends ApiGuardController
 }
 ```
 
-The above example will limit the access of a particular API key to 100 requests for every hour.
+The above example will limit the access to the `show` method of an API key to 100 requests for every hour.
 
 Note: The `increment` option can be any value that is accepted by the `strtotime()` method.
 
@@ -237,7 +243,7 @@ There is also an option to limit the request rate for a given method no matter w
 ```php
 <?php
 
-use Chrisbjr\ApiGuard\Controllers\ApiGuardController;
+use Chrisbjr\ApiGuard\Http\Controllers\ApiGuardController;
 
 class BooksController extends ApiGuardController
 {
@@ -261,102 +267,3 @@ class BooksController extends ApiGuardController
 The above example will limit the request rate to the `show` method to 1000 requests per day.
 
 Note: The `increment` option can be any value that is accepted by the `strtotime()` method.
-
-## Accessing the User instance and Stateless authentication
-
-You can easily access the User instance from the belongsTo() relationship of the ApiKey model to the User class. With this, we can implement API based authentication with the following as an example. 
-
-Note that while we have utilized [Confide](https://github.com/zizaco/confide) for handling the credential checking, you can have your own way of having this done (like using the native Laravel Auth class, or [Sentry](https://github.com/cartalyst/sentry) for that matter).
-
-```php
-<?php namespace api\v1;
-
-use Chrisbjr\ApiGuard\Controllers\ApiGuardController;
-use Chrisbjr\ApiGuard\Models\ApiKey;
-use Chrisbjr\ApiGuard\Transformers\ApiKeyTransformer;
-use Confide;
-use Input;
-use User;
-use Validator;
-
-class UserApiController extends ApiGuardController
-{
-    protected $apiMethods = [
-        'authenticate' => [
-            'keyAuthentication' => false
-        ]
-    ];
-
-    public function authenticate() {
-        $credentials['username'] = Input::json('username');
-        $credentials['password'] = Input::json('password');
-
-        $validator = Validator::make([
-                'username' => $credentials['username'],
-                'password' => $credentials['password']
-            ],
-            [
-                'username' => 'required|max:255',
-                'password' => 'required|max:255'
-            ]
-        );
-
-        if ($validator->fails()) {
-            return $this->response->errorWrongArgsValidator($validator);
-        }
-
-        try {
-            $user                 = User::whereUsername($credentials['username'])->first();
-            $credentials['email'] = $user->email;
-        } catch (\ErrorException $e) {
-            return $this->response->errorUnauthorized("Your username or password is incorrect");
-        }
-
-        if (Confide::logAttempt($credentials) == false) {
-            return $this->response->errorUnauthorized("Your username or password is incorrect");
-        }
-
-        // We have validated this user
-        // Assign an API key for this session
-        $apiKey = ApiKey::where('user_id', '=', $user->id)->first();
-        if (!isset($apiKey)) {
-            $apiKey                = new ApiKey;
-            $apiKey->user_id       = $user->id;
-            $apiKey->key           = $apiKey->generateKey();
-            $apiKey->level         = 5;
-            $apiKey->ignore_limits = 0;
-        } else {
-            $apiKey->generateKey();
-        }
-
-        if (!$apiKey->save()) {
-            return $this->response->errorInternalError("Failed to create an API key. Please try again.");
-        }
-
-        // We have an API key.. i guess we only need to return that.
-        return $this->response->withItem($apiKey, new ApiKeyTransformer);
-    }
-
-    public function getUserDetails() {
-        $user = $this->apiKey->user;
-
-        return isset($user) ? $user : $this->response->errorNotFound();
-    }
-
-    public function deauthenticate() {
-        if (empty($this->apiKey)) {
-            return $this->response->errorUnauthorized("There is no such user to deauthenticate.");
-        }
-
-        $this->apiKey->delete();
-
-        return $this->response->withArray([
-            'ok' => [
-                'code'      => 'SUCCESSFUL',
-                'http_code' => 200,
-                'message'   => 'User was successfuly deauthenticated'
-            ]
-        ]);
-    }
-}
-```

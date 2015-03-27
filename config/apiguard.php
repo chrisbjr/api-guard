@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
     |--------------------------------------------------------------------------
@@ -103,4 +103,4 @@ return array(
 
     'methodLimitIncrement' => '1 hour',
 
-);
+];
