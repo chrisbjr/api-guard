@@ -35,9 +35,6 @@ class CreateApiKeysTable extends Migration
             $table->text('params');
             $table->string('ip_address');
             $table->nullableTimestamps();
-            $table->index('api_key_id');
-            $table->index('route');
-            $table->index('method');
 
             $table->index('route');
             $table->index('method');
