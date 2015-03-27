@@ -39,7 +39,7 @@ abstract class ApiKeyRepository extends Eloquent
      *
      * @return string
      */
-    public static function generateKey()
+    public function generateKey()
     {
         do {
             $salt = sha1(time() . mt_rand());
@@ -56,7 +56,7 @@ abstract class ApiKeyRepository extends Eloquent
      * @param $key
      * @return bool
      */
-    private static function keyExists($key)
+    private function keyExists($key)
     {
         $apiKeyCount = self::where('key', '=', $key)->limit(1)->count();
 
