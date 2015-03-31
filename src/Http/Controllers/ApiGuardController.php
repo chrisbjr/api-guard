@@ -188,15 +188,25 @@ class ApiGuardController extends Controller
             }
 
             // End of cheking limits
-            if (Config::get('apiguard.logging', true) && $keyAuthentication == true) {
-                // Log this API request
-                $apiLog = App::make(Config::get('apiguard.apiLogModel', 'Chrisbjr\ApiGuard\Models\ApiLog'));
-                $apiLog->api_key_id = $this->apiKey->id;
-                $apiLog->route = Route::currentRouteAction();
-                $apiLog->method = $request->getMethod();
-                $apiLog->params = http_build_query(Input::all());
-                $apiLog->ip_address = $request->getClientIp();
-                $apiLog->save();
+            if (Config::get('apiguard.logging', true)) {
+                // Default to log requests from this action
+                $logged = true;
+
+                if (isset($apiMethods[$method]['logged']) && $apiMethods[$method]['logged'] === false) {
+                    $logged = false;
+                }
+
+                if($logged) {
+                    // Log this API request
+                    $apiLog = App::make(Config::get('apiguard.apiLogModel', 'Chrisbjr\ApiGuard\Models\ApiLog'));
+                    $apiLog->api_key_id = $this->apiKey->id;
+                    $apiLog->route = Route::currentRouteAction();
+                    $apiLog->method = $request->getMethod();
+                    $apiLog->params = http_build_query(Input::all());
+                    $apiLog->ip_address = $request->getClientIp();
+                    $apiLog->save();
+                    
+                }
             }
 
         }, ['apiMethods' => $this->apiMethods]);
