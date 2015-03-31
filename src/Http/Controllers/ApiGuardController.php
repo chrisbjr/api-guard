@@ -196,16 +196,20 @@ class ApiGuardController extends Controller
                     $logged = false;
                 }
 
-                if($logged) {
+                if ($logged) {
                     // Log this API request
                     $apiLog = App::make(Config::get('apiguard.apiLogModel', 'Chrisbjr\ApiGuard\Models\ApiLog'));
-                    $apiLog->api_key_id = $this->apiKey->id;
-                    $apiLog->route = Route::currentRouteAction();
-                    $apiLog->method = $request->getMethod();
-                    $apiLog->params = http_build_query(Input::all());
+
+                    if (isset($this->apiKey)) {
+                        $apiLog->api_key_id = $this->apiKey->id;
+                    }
+
+                    $apiLog->route      = Route::currentRouteAction();
+                    $apiLog->method     = $request->getMethod();
+                    $apiLog->params     = http_build_query(Input::all());
                     $apiLog->ip_address = $request->getClientIp();
                     $apiLog->save();
-                    
+
                 }
             }
 
