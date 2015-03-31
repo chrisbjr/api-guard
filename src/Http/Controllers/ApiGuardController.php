@@ -188,7 +188,7 @@ class ApiGuardController extends Controller
             }
 
             // End of cheking limits
-            if (Config::get('apiguard.logging', true)) {
+            if (Config::get('api-guard::logging', true)) {
                 // Default to log requests from this action
                 $logged = true;
 
@@ -198,7 +198,7 @@ class ApiGuardController extends Controller
 
                 if ($logged) {
                     // Log this API request
-                    $apiLog = App::make(Config::get('apiguard.apiLogModel', 'Chrisbjr\ApiGuard\Models\ApiLog'));
+                    $apiLog = App::make(Config::get('api-guard::apiLogModel', 'Chrisbjr\ApiGuard\Models\ApiLog'));
 
                     if (isset($this->apiKey)) {
                         $apiLog->api_key_id = $this->apiKey->id;
