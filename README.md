@@ -267,3 +267,28 @@ class BooksController extends ApiGuardController
 The above example will limit the request rate to the `show` method to 1000 requests per day.
 
 Note: The `increment` option can be any value that is accepted by the `strtotime()` method.
+
+### Logging at method level
+
+You can set logging at method level by using the `logged` option.
+
+```php
+<?php
+
+use Chrisbjr\ApiGuard\Http\Controllers\ApiGuardController;
+
+class BooksController extends ApiGuardController
+{
+
+    protected $apiMethods = [
+        'show' => [
+            'logged' => true
+        ]
+    ];
+    
+    ...
+
+}
+```
+
+By default for all methods in api-guard, the option `logged` is set to true. Set it to `false` to exclude that method for logging.
