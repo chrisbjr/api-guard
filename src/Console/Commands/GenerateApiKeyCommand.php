@@ -47,8 +47,8 @@ class GenerateApiKeyCommand extends Command
 
             $apiKey = $apiKeyModel->where('user_id', '=', $userId)->first();
 
-            if ( ! empty($apiKey) || !$apiKey) {
-                $overwrite = $this->ask("This user already has an existing API key. Do you want to overwrite it? [y/n]");
+            if ($apiKey) {
+                $overwrite = $this->ask("This user already has an existing API key. Do you want to create another one? [y/n]");
                 if ($overwrite == 'n') {
                     return;
                 }
