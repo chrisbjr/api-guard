@@ -4,6 +4,7 @@ namespace Chrisbjr\ApiGuard\Http\Controllers;
 
 use App;
 use Chrisbjr\ApiGuard\Repositories\ApiKeyRepository;
+use Chrisbjr\ApiGuard\Repositories\ApiLogRepository;
 use Config;
 use EllipseSynergie\ApiResponse\Laravel\Response;
 use Exception;
@@ -26,6 +27,12 @@ class ApiGuardController extends Controller
      * @var ApiKeyRepository
      */
     public $apiKey = null;
+
+
+    /**
+     * @var ApiLogRepository
+     */
+    public $apiLog = null;
 
     /**
      * @var Response
@@ -198,17 +205,17 @@ class ApiGuardController extends Controller
 
                 if ($logged) {
                     // Log this API request
-                    $apiLog = App::make(Config::get('api-guard::apiLogModel', 'Chrisbjr\ApiGuard\Models\ApiLog'));
+                    $this->apiLog = App::make(Config::get('api-guard::apiLogModel', 'Chrisbjr\ApiGuard\Models\ApiLog'));
 
                     if (isset($this->apiKey)) {
-                        $apiLog->api_key_id = $this->apiKey->id;
+                        $this->apiLog->api_key_id = $this->apiKey->id;
                     }
 
-                    $apiLog->route      = Route::currentRouteAction();
-                    $apiLog->method     = $request->getMethod();
-                    $apiLog->params     = http_build_query(Input::all());
-                    $apiLog->ip_address = $request->getClientIp();
-                    $apiLog->save();
+                    $this->apiLog->route      = Route::currentRouteAction();
+                    $this->apiLog->method     = $request->getMethod();
+                    $this->apiLog->params     = http_build_query(Input::all());
+                    $this->apiLog->ip_address = $request->getClientIp();
+                    $this->apiLog->save();
 
                 }
             }
