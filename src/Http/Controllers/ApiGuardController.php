@@ -198,8 +198,14 @@ class ApiGuardController extends Controller
                 $apiLog->ip_address = $request->getClientIp();
                 $apiLog->save();
             }
+            $this->initialize();
 
         }, ['apiMethods' => $this->apiMethods]);
+    }
+
+    public function initialize()
+    {
+        // This is where you want to construct your class.. in replace of the constructor
     }
 
 }
