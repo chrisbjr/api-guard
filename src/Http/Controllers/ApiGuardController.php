@@ -4,6 +4,7 @@ namespace Chrisbjr\ApiGuard\Http\Controllers;
 
 use App;
 use Chrisbjr\ApiGuard\Repositories\ApiKeyRepository;
+use Chrisbjr\ApiGuard\Repositories\ApiLogRepository;
 use Config;
 use EllipseSynergie\ApiResponse\Laravel\Response;
 use Exception;
@@ -26,6 +27,12 @@ class ApiGuardController extends Controller
      * @var ApiKeyRepository
      */
     public $apiKey = null;
+
+
+    /**
+     * @var ApiLogRepository
+     */
+    public $apiLog = null;
 
     /**
      * @var Response
@@ -188,15 +195,29 @@ class ApiGuardController extends Controller
             }
 
             // End of cheking limits
-            if (Config::get('apiguard.logging', true) && $keyAuthentication == true) {
-                // Log this API request
-                $apiLog = App::make(Config::get('apiguard.apiLogModel', 'Chrisbjr\ApiGuard\Models\ApiLog'));
-                $apiLog->api_key_id = $this->apiKey->id;
-                $apiLog->route = Route::currentRouteAction();
-                $apiLog->method = $request->getMethod();
-                $apiLog->params = http_build_query(Input::all());
-                $apiLog->ip_address = $request->getClientIp();
-                $apiLog->save();
+            if (Config::get('api-guard::logging', true)) {
+                // Default to log requests from this action
+                $logged = true;
+
+                if (isset($apiMethods[$method]['logged']) && $apiMethods[$method]['logged'] === false) {
+                    $logged = false;
+                }
+
+                if ($logged) {
+                    // Log this API request
+                    $this->apiLog = App::make(Config::get('api-guard::apiLogModel', 'Chrisbjr\ApiGuard\Models\ApiLog'));
+
+                    if (isset($this->apiKey)) {
+                        $this->apiLog->api_key_id = $this->apiKey->id;
+                    }
+
+                    $this->apiLog->route      = Route::currentRouteAction();
+                    $this->apiLog->method     = $request->getMethod();
+                    $this->apiLog->params     = http_build_query(Input::all());
+                    $this->apiLog->ip_address = $request->getClientIp();
+                    $this->apiLog->save();
+
+                }
             }
             $this->initialize();
 
