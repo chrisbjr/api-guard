@@ -15,9 +15,9 @@ I've been looking for an equivalent for Laravel but did not find any so this is 
 
 Various versions of api-guard:
 
-**Laravel 5.0.x**: `2.0.*`
+**Laravel 5.0.x**: `2.*`
 
-**Laravel 4.2.x**: [`1.0`](https://github.com/chrisbjr/api-guard/tree/v1.0) (Recently updated version for Laravel 4. Please note that there are namespace changes here)
+**Laravel 4.2.x**: [`1.*`](https://github.com/chrisbjr/api-guard/tree/laravel4) (Recently updated version for Laravel 4. Please note that there are namespace changes here)
 
 **Laravel 4.2.x**: [`0.*`](https://github.com/chrisbjr/api-guard/tree/v0.7) (The version that most of you are using)
 
@@ -27,7 +27,7 @@ Various versions of api-guard:
 
 In the `require` key of your `composer.json` file add the following
 
-    "chrisbjr/api-guard": "2.0.*"
+    "chrisbjr/api-guard": "~2.0"
 
 Run the Composer update comand
 
