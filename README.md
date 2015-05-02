@@ -17,7 +17,7 @@ I've been looking for an equivalent for Laravel but did not find any so this is 
 
 In the `require` key of `composer.json` file add the following
 
-    "chrisbjr/api-guard": "1.0.*"
+    "chrisbjr/api-guard": "~1.0"
 
 Run the Composer update comand
 
