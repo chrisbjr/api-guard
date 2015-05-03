@@ -28,7 +28,7 @@ class CreateApiKeysTable extends Migration
 
         Schema::create('api_logs', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('api_key_id')->unsigned();
+            $table->integer('api_key_id', false, true)->nullable();
             $table->string('route', 50);
             $table->string('method', 6);
             $table->text('params');
