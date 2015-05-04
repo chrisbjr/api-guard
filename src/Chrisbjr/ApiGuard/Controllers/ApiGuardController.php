@@ -205,7 +205,14 @@ class ApiGuardController extends Controller
                 }
             }
 
+            $this->initialize();
+
         }, ['apiMethods' => $this->apiMethods]);
+    }
+
+    public function initialize()
+    {
+        // feel free to override this in place of your constructor
     }
 
 }
