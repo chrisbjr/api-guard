@@ -195,7 +195,7 @@ class ApiGuardController extends Controller
             }
 
             // End of cheking limits
-            if (Config::get('api-guard::logging', true)) {
+            if (Config::get('apiguard.logging', true)) {
                 // Default to log requests from this action
                 $logged = true;
 
