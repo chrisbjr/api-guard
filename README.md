@@ -15,15 +15,15 @@ I've been looking for an equivalent for Laravel but did not find any so this is 
 
 Various versions of api-guard:
 
-**Laravel 5.0.x**: `2.*`
+**Laravel 5.x**: `~2.*`
 
-**Laravel 4.2.x**: [`1.*`](https://github.com/chrisbjr/api-guard/tree/laravel4) (Recently updated version for Laravel 4. Please note that there are namespace changes here)
+**Laravel 4.2.x**: [`~1.*`](https://github.com/chrisbjr/api-guard/tree/laravel4) (Recently updated version for Laravel 4. Please note that there are namespace changes here)
 
 **Laravel 4.2.x**: [`0.*`](https://github.com/chrisbjr/api-guard/tree/v0.7) (The version that most of you are using)
 
 ## Quick start
 
-### Laravel 5.0.x
+### Laravel 5.x
 
 In the `require` key of your `composer.json` file add the following
 
