@@ -23,9 +23,6 @@
         "ellipsesynergie/api-response": "0.9.*"
     },
     "autoload": {
-        "classmap": [
-            "database"
-        ],
         "psr-4": {
             "Chrisbjr\\ApiGuard\\": "src"
         }
