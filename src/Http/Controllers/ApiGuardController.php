@@ -156,7 +156,7 @@ class ApiGuardController extends Controller
 
                                 if ($apiLogCount >= $keyLimit) {
                                     Log::warning("[Chrisbjr/ApiGuard] The API key ID#{$this->apiKey->id} has reached the limit of {$keyLimit} in the following route: " . Route::currentRouteAction());
-                                    return $this->response->errorUnwillingToProcess('You have reached the limit for using this API.');
+                                    return $this->response->setStatusCode(429)->withError('You have reached the limit for using this API.', 'GEN-TOO-MANY-REQUESTS');
                                 }
                             }
                         }
@@ -186,7 +186,7 @@ class ApiGuardController extends Controller
 
                                 if ($apiLogCount >= $methodLimit) {
                                     Log::warning("[Chrisbjr/ApiGuard] The API has reached the method limit of {$methodLimit} in the following route: " . Route::currentRouteAction());
-                                    return $this->response->errorUnwillingToProcess('The limit for using this API method has been reached');
+                                    return $this->response->setStatusCode(429)->withError('The limit for using this API method has been reached', 'GEN-TOO-MANY-REQUESTS');
                                 }
                             }
                         }
