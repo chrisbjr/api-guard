@@ -1,7 +1,7 @@
 ApiGuard
 ========
 
-[![Join the chat at https://gitter.im/chrisbjr/api-guard](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/chrisbjr/api-guard?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Total Downloads](https://img.shields.io/packagist/dt/chrisbjr/api-guard.svg)](https://packagist.org/packages/monolog/monolog) [![Join the chat at https://gitter.im/chrisbjr/api-guard](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/chrisbjr/api-guard?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 A simple way of authenticating your APIs with API keys using Laravel. This package uses the following libraries:
 
