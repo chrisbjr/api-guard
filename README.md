@@ -41,7 +41,7 @@ In your `config/app.php` add `Chrisbjr\ApiGuard\Providers\ApiGuardServiceProvide
 'providers' => array(
 
     ...
-    'Chrisbjr\ApiGuard\Providers\ApiGuardServiceProvider',
+    Chrisbjr\ApiGuard\Providers\ApiGuardServiceProvider::class,
 ),
 ```
 
