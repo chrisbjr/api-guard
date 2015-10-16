@@ -25,13 +25,7 @@ Various versions of api-guard:
 
 ### Laravel 5.0.x
 
-In the `require` key of your `composer.json` file add the following
-
-    "chrisbjr/api-guard": "~2.0"
-
-Run the Composer update comand
-
-    $ composer update
+Run `composer require chrisbjr/api-guard`
 
 In your `config/app.php` add `Chrisbjr\ApiGuard\Providers\ApiGuardServiceProvider` to the end of the `providers` array
 
