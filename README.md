@@ -67,6 +67,14 @@ To generate an API key that is linked to a user, you can do the following:
 
 `php artisan api-key:generate --user-id=1`
 
+To generate an API key from within your application, you can use the available Facade:
+
+```
+$apiKey = new Chrisbjr\ApiGuard\ApiKey;
+$apiKey->key = $apiKey->generateKey();
+$apiKey->save();
+```
+
 ## Usage
 
 Basic usage of ApiGuard is to create a controller and extend that class to use the `ApiGuardController`.
