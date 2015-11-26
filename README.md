@@ -70,7 +70,7 @@ To generate an API key that is linked to a user, you can do the following:
 To generate an API key from within your application, you can use the available Facade:
 
 ```
-$apiKey = new Chrisbjr\ApiGuard\ApiKey;
+$apiKey = new Chrisbjr\ApiGuard\Models\ApiKey;
 $apiKey->key = $apiKey->generateKey();
 $apiKey->save();
 ```
