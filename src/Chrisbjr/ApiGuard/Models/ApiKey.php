@@ -18,6 +18,10 @@ use Eloquent;
 class ApiKey extends Eloquent
 {
     protected $table = 'api_keys';
+    
+    use SoftDeletingTrait;
+
+    protected $dates = ['deleted_at'];
 
     public function user()
     {
