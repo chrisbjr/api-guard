@@ -3,6 +3,7 @@
 use Carbon\Carbon;
 use Config;
 use Eloquent;
+use Illuminate\Database\Eloquent\SoftDeletingTrait;
 
 /**
  * ApiKey Eloquent Model
