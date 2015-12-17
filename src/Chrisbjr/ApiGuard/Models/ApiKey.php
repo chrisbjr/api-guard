@@ -3,6 +3,7 @@
 use Carbon\Carbon;
 use Config;
 use Eloquent;
+use Illuminate\Database\Eloquent\SoftDeletingTrait;
 
 /**
  * ApiKey Eloquent Model
@@ -18,6 +19,10 @@ use Eloquent;
 class ApiKey extends Eloquent
 {
     protected $table = 'api_keys';
+    
+    use SoftDeletingTrait;
+
+    protected $dates = ['deleted_at'];
 
     public function user()
     {
