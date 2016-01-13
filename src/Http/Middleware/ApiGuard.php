@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Middleware;
+namespace Chrisbjr\ApiGuard\Http\Middleware;
 
 use App;
 use Log;
