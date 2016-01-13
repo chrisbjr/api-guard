@@ -1,4 +1,6 @@
-<?php namespace Chrisbjr\ApiGuard\Providers;
+<?php
+
+namespace Chrisbjr\ApiGuard\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -12,7 +14,6 @@ class ApiGuardServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->app->register('EllipseSynergie\ApiResponse\Laravel\ResponseServiceProvider');
 
         $this->commands([
             'Chrisbjr\ApiGuard\Console\Commands\GenerateApiKeyCommand',
