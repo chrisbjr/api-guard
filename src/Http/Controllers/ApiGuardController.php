@@ -21,7 +21,7 @@ class ApiGuardController extends Controller
     $serializedApiMethods = serialize($this->apiMethods);
 
     // Let's instantiate the response class first
-    $this->manager = new Manager;
+    $manager = new Manager;
 
     // Launch middleware
     $this->middleware('apiguard:'.$serializedApiMethods);
