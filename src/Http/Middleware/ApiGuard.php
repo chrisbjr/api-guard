@@ -27,11 +27,18 @@ class ApiGuard
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle($request, Closure $next, $serializedApiMethods)
+    public function handle($request, Closure $next, $serializedApiMethods=null)
     {
 
       // Unserialize parameters
-      $apiMethods = unserialize($serializedApiMethods);
+      if($serializedApiMethods !== null)
+      {
+          $apiMethods = unserialize($serializedApiMethods);
+      }
+      else
+      {
+          $apiMethods = [];
+      }
 
       // Let's instantiate the response class first
       $manager = new Manager;
