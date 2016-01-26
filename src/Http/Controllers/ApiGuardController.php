@@ -87,29 +87,31 @@ class ApiGuardController extends Controller
                 $keyAuthentication = false;
             }
 
+            $key = $request->header(Config::get('apiguard.keyName', 'X-Authorization'));
+
+            if (empty($key)) {
+                // Try getting the key from elsewhere
+                $key = Input::get(Config::get('apiguard.keyName', 'X-Authorization'));
+            }
+
+            $apiKeyModel = App::make(Config::get('apiguard.model', 'Chrisbjr\ApiGuard\Models\ApiKey'));
+
+            if (!empty($key)) {
+                $this->apiKey = $apiKeyModel->getByKey($key);
+            }
+
             if ($keyAuthentication === true) {
-
-                $key = $request->header(Config::get('apiguard.keyName', 'X-Authorization'));
-
-                if (empty($key)) {
-                    // Try getting the key from elsewhere
-                    $key = Input::get(Config::get('apiguard.keyName', 'X-Authorization'));
-                }
 
                 if (empty($key)) {
                     // It's still empty!
                     return $this->response->errorUnauthorized();
                 }
 
-                $apiKeyModel = App::make(Config::get('apiguard.model', 'Chrisbjr\ApiGuard\Models\ApiKey'));
-
                 if ( ! $apiKeyModel instanceof ApiKeyRepository) {
                     Log::error('[Chrisbjr/ApiGuard] You ApiKey model should be an instance of ApiKeyRepository.');
                     $exception = new Exception("You ApiKey model should be an instance of ApiKeyRepository.");
                     throw($exception);
                 }
-
-                $this->apiKey = $apiKeyModel->getByKey($key);
 
                 if (empty($this->apiKey)) {
                     return $this->response->errorUnauthorized();
