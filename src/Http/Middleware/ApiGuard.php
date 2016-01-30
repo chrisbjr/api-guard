@@ -27,11 +27,18 @@ class ApiGuard
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle($request, Closure $next, $serializedApiMethods)
+    public function handle($request, Closure $next, $serializedApiMethods=null)
     {
 
       // Unserialize parameters
-      $apiMethods = unserialize($serializedApiMethods);
+      if($serializedApiMethods !== null)
+      {
+          $apiMethods = unserialize($serializedApiMethods);
+      }
+      else
+      {
+          $apiMethods = [];
+      }
 
       // Let's instantiate the response class first
       $manager = new Manager;
@@ -182,6 +189,16 @@ class ApiGuard
 
           }
       }
+
+        // login User
+        $headers = apache_request_headers();
+        $api_key = $headers[Config::get('apiguard.keyName', 'X-Authorization')];
+
+        $user_id = App::make(Config::get('apiguard.model', 'Chrisbjr\ApiGuard\Models\ApiKey'))::where('key', $api_key)
+            ->pluck('user_id');
+        
+        if($user_id !== 0)
+            Auth::loginUsingId($user_id);
 
         return $next($request);
     }
