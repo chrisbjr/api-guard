@@ -17,7 +17,7 @@ I've been looking for an equivalent for Laravel but did not find any so this is 
 
 Various versions of api-guard:
 
-**Laravel 5.2.x**: `~3.*`
+**Laravel 5.2.x**: `~3.*` (did by @gholol. :+1:)
 
 NOTE: For this to work in Laravel 5.2, add the apiguard middleware to the `$routeMiddleware` array in `app/Http/Kernel.php` as shown below:
 
