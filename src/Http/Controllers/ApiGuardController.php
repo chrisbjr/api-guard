@@ -2,11 +2,11 @@
 
 namespace Chrisbjr\ApiGuard\Http\Controllers;
 
-use Input;
 use Config;
 use Exception;
 use League\Fractal\Manager;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Input;
 use EllipseSynergie\ApiResponse\Laravel\Response;
 
 class ApiGuardController extends Controller

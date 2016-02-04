@@ -5,11 +5,11 @@ namespace Chrisbjr\ApiGuard\Http\Middleware;
 use App;
 use Log;
 use Route;
-use Input;
 use Config;
 use Closure;
 use Illuminate\Support\Str;
 use League\Fractal\Manager;
+use Illuminate\Support\Facades\Input;
 use EllipseSynergie\ApiResponse\Laravel\Response;
 use Chrisbjr\ApiGuard\Repositories\ApiKeyRepository;
 use Chrisbjr\ApiGuard\Repositories\ApiLogRepository;
@@ -196,7 +196,7 @@ class ApiGuard
 
         $user_id = App::make(Config::get('apiguard.model', 'Chrisbjr\ApiGuard\Models\ApiKey'))->where('key', $api_key)
             ->pluck('user_id');
-        
+
         if($user_id !== 0)
             Auth::loginUsingId($user_id);
 
