@@ -194,7 +194,7 @@ class ApiGuard
         $headers = apache_request_headers();
         $api_key = $headers[Config::get('apiguard.keyName', 'X-Authorization')];
 
-        $user_id = App::make(Config::get('apiguard.model', 'Chrisbjr\ApiGuard\Models\ApiKey'))::where('key', $api_key)
+        $user_id = App::make(Config::get('apiguard.model', 'Chrisbjr\ApiGuard\Models\ApiKey'))->where('key', $api_key)
             ->pluck('user_id');
         
         if($user_id !== 0)
