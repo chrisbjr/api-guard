@@ -207,8 +207,7 @@ class ApiGuard
 
         if($user_id !== 0)
             Auth::loginUsingId($user_id);
-
-        return $next($request);
         }
+        return $next($request);
     }
 }
