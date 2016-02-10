@@ -4,6 +4,7 @@ namespace Chrisbjr\ApiGuard\Http\Middleware;
 
 use App;
 use Log;
+use Auth;
 use Route;
 use Config;
 use Closure;
