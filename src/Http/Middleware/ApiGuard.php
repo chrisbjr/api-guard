@@ -191,7 +191,10 @@ class ApiGuard
           }
       }
 
-        // login User
+        // Login User using its apiKey
+        // apache_request_headers() creates additional apache dependency for <= PHP 5.3 users
+        // since PHP 5.4 it was patched to also show all headers in FastCGI and CGI
+        // I'm still saying this should be removed completely, you know? ~ gholol
         $headers = apache_request_headers();
         //$api_key = $headers[Config::get('apiguard.keyName', 'X-Authorization')];
         
@@ -203,11 +206,12 @@ class ApiGuard
         
         if(!empty($api_key)) {
 
-        $user_id = App::make(Config::get('apiguard.model', 'Chrisbjr\ApiGuard\Models\ApiKey'))->where('key', $api_key)
-            ->pluck('user_id');
-
-        if($user_id !== 0)
-            Auth::loginUsingId($user_id);
+            $user_id = App::make(Config::get('apiguard.model', 'Chrisbjr\ApiGuard\Models\ApiKey'))->where('key', $api_key)
+            ->value('user_id');
+    
+            if($user_id !== 0) {
+                Auth::loginUsingId($user_id);
+            }
         }
         return $next($request);
     }
