@@ -17,12 +17,20 @@ abstract class ApiLogRepository extends Eloquent
 
     protected $table = 'api_logs';
 
+    protected $fillable = [
+        'api_key_id',
+        'route',
+        'method',
+        'params',
+        'ip_address',
+    ];
+
     /**
      * @return ApiKeyRepository
      */
     public function apiKey()
     {
-        return $this->hasOne(Config::get('apiguard.model'));
+        return $this->hasOne(Config::get('apiguard.models.apiKey'));
     }
 
     public function countApiKeyRequests($apiKeyId, $routeAction, $method, $keyIncrementTime)
