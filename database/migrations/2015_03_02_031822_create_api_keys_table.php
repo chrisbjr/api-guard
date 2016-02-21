@@ -15,7 +15,7 @@ class CreateApiKeysTable extends Migration
     {
         Schema::create('api_keys', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id')->unsigned();
+            $table->integer('user_id', false, true)->nullable();
             $table->string('key', 40);
             $table->smallInteger('level');
             $table->boolean('ignore_limits');
@@ -25,22 +25,32 @@ class CreateApiKeysTable extends Migration
             // unique key
             $table->unique('key');
 
-            // Uncomment this if you want to link user ids to your users table
-            //$table->foreign('user_id')->references('id')->on('users');
+            // Let's index the user ID just in case you don't set it as a foreign key
+            $table->index('user_id');
+
+            // Uncomment the line below if you want to link user ids to your users table
+            //$table->foreign('user_id')->references('id')->on('users')->onDelete('set null');;
         });
 
         Schema::create('api_logs', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('api_key_id', false, true)->nullable();
-            $table->string('route', 150);
+            $table->integer('user_id', false, true)->nullable();
+            $table->string('route', 255);
             $table->string('method', 6);
             $table->text('params');
             $table->string('ip_address');
             $table->nullableTimestamps();
 
+            $table->foreign('api_key_id')->references('id')->on('api_keys');
             $table->index('route');
             $table->index('method');
-            $table->foreign('api_key_id')->references('id')->on('api_keys');
+
+            // Let's index the user ID just in case you don't set it as a foreign key
+            $table->index('user_id');
+
+            // Uncomment the line below if you want to link user ids to your users table
+            //$table->foreign('user_id')->references('id')->on('users')->onDelete('set null');;
         });
     }
 
