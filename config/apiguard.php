@@ -14,29 +14,13 @@ return [
 
     'logging'              => true,
 
-    /*
-    |--------------------------------------------------------------------------
-    | ApiKey model
-    |--------------------------------------------------------------------------
-    |
-    | If you're extending the ApiKey model, define the namespace of the class
-    | here.
-    |
-    */
+    'models'               => [
 
-    'model'                => 'Chrisbjr\ApiGuard\Models\ApiKey',
+        'apiKey' => \Chrisbjr\ApiGuard\Models\ApiKey::class,
 
-    /*
-    |--------------------------------------------------------------------------
-    | ApiLog model
-    |--------------------------------------------------------------------------
-    |
-    | If you're extending the ApiLog model, define the namespace of the class
-    | here.
-    |
-    */
+        'apiLog' => \Chrisbjr\ApiGuard\Models\ApiLog::class,
 
-    'apiLogModel'          => 'Chrisbjr\ApiGuard\Models\ApiLog',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -102,5 +86,19 @@ return [
     */
 
     'methodLimitIncrement' => '1 hour',
+
+    'providers'            => [
+
+        /*
+        |--------------------------------------------------------------------------
+        | Authentication Provider
+        |--------------------------------------------------------------------------
+        |
+        | Specify the provider that is used to authenticate users.
+        |
+        */
+        'auth' => Chrisbjr\ApiGuard\Providers\Auth\Illuminate::class
+
+    ]
 
 ];

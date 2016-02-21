@@ -45,7 +45,7 @@ class DeleteApiKeyCommand extends Command
             $confirmation = $this->ask("Are you sure you want to delete this API key? [y/n]");
 
             if ($confirmation == 'y') {
-                $apiKeyModel = App::make(Config::get('apiguard.model', 'Chrisbjr\ApiGuard\Models\ApiKey'));
+                $apiKeyModel = App::make(Config::get('apiguard.models.apiKey', 'Chrisbjr\ApiGuard\Models\ApiKey'));
                 $apiKey = $apiKeyModel->where('key', '=', $key)->first();
 
                 if (empty($apiKey) || $apiKey->exists == false) {
