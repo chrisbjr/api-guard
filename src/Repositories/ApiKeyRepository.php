@@ -1,4 +1,6 @@
-<?php namespace Chrisbjr\ApiGuard\Repositories;
+<?php
+
+namespace Chrisbjr\ApiGuard\Repositories;
 
 use App;
 use Eloquent;
@@ -12,11 +14,18 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 abstract class ApiKeyRepository extends Eloquent
 {
 
-    protected $table = 'api_keys';
-
     use SoftDeletes;
 
+    protected $table = 'api_keys';
+
     protected $dates = ['deleted_at'];
+
+    protected $fillable = [
+        'user_id',
+        'key',
+        'level',
+        'ignore_limits',
+    ];
 
     /**
      * @param $key
@@ -48,6 +57,24 @@ abstract class ApiKeyRepository extends Eloquent
         while (self::keyExists($newKey));
 
         return $newKey;
+    }
+
+    /**
+     * Make an ApiKey
+     *
+     * @param null $userId
+     * @param int $level
+     * @param bool $ignoreLimits
+     * @return static
+     */
+    public static function make($userId = null, $level = 10, $ignoreLimits = false)
+    {
+        return self::create([
+            'user_id'       => $userId,
+            'key'           => self::generateKey(),
+            'level'         => $level,
+            'ignore_limits' => $ignoreLimits,
+        ]);
     }
 
     /**
