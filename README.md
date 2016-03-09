@@ -61,27 +61,7 @@ It will setup two tables - api_keys and api_logs.
 
 ### Laravel 5.0.x to 5.1.x
 
-Run `composer require chrisbjr/api-guard 2.0.*`
-
-In your `config/app.php` add `Chrisbjr\ApiGuard\Providers\ApiGuardServiceProvider` to the end of the `providers` array
-
-```php
-'providers' => array(
-
-    ...
-    Chrisbjr\ApiGuard\Providers\ApiGuardServiceProvider::class,
-),
-```
-
-Now publish the migration and configuration files for api-guard:
-
-    $ php artisan vendor:publish --provider="Chrisbjr\ApiGuard\Providers\ApiGuardServiceProvider"
-    
-Then run the migration:
-
-    $ php artisan migrate
-
-It will setup two tables - api_keys and api_logs.
+Note: Documentation for use with Laravel 5.0.x and 5.1.x differs from Laravel 5.2.x. Please refer to the README [here](https://github.com/chrisbjr/api-guard/tree/v2.3.0).
 
 ### Laravel 4.2.x
 
@@ -101,12 +81,10 @@ To generate an API key that is linked to a user, you can do the following:
 
 `php artisan api-key:generate --user-id=1`
 
-To generate an API key from within your application, you can use the available Facade:
+To generate an API key from within your application, you can use the following method in the `ApiKey` model:
 
 ```
-$apiKey = new Chrisbjr\ApiGuard\Models\ApiKey;
-$apiKey->key = $apiKey->generateKey();
-$apiKey->save();
+$apiKey = Chrisbjr\ApiGuard\Models\ApiKey::make()
 ```
 
 ## Usage
