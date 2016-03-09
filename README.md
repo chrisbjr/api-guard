@@ -15,13 +15,13 @@ I've been looking for an equivalent for Laravel but did not find any so this is 
 
 ## Laravel 5 is finally supported!
 
-**Laravel 5.2.*: `~3.*`
+**Laravel 5.1.x to 5.2.x: `~3.*`
 
-**Laravel 5.1.*: `~2.*`
+**Laravel 5.1.x: `~2.*`
 
-**Laravel 4.2.*: [`~1.*`](https://github.com/chrisbjr/api-guard/tree/laravel4) (Recently updated version for Laravel 4. Please note that there are namespace changes here)
+**Laravel 4.2.x: [`~1.*`](https://github.com/chrisbjr/api-guard/tree/laravel4) (Recently updated version for Laravel 4. Please note that there are namespace changes here)
 
-**Laravel 4.2.*: [`0.*`](https://github.com/chrisbjr/api-guard/tree/v0.7) (The version that most of you are using)
+**Laravel 4.2.x: [`0.*`](https://github.com/chrisbjr/api-guard/tree/v0.7) (The version that most of you are using)
 
 ## Quick start
 
