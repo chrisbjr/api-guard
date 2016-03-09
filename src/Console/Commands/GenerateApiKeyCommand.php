@@ -1,6 +1,7 @@
 <?php namespace Chrisbjr\ApiGuard\Console\Commands;
 
 use App;
+use Chrisbjr\ApiGuard\Models\ApiKey;
 use Config;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
@@ -54,20 +55,14 @@ class GenerateApiKeyCommand extends Command
             }
         }
 
-        $apiKey = App::make(Config::get('apiguard.models.apiKey', 'Chrisbjr\ApiGuard\Models\ApiKey'));
-        $apiKey->make($this->getOption('user-id', null), $this->getOption('level', 10), $this->getOption('ignore-limits', 1));
-
-        if ($apiKey->save() === false) {
-            $this->error("Failed to save API key to the database.");
-
-            return;
-        }
+        $apiKey = ApiKey::make($this->getOption('user-id', null), $this->getOption('level', 10), $this->getOption('ignore-limits', 1));
 
         if (empty($apiKey->user_id)) {
             $this->info("You have successfully generated an API key:");
         } else {
             $this->info("You have successfully generated an API key for user ID#{$apiKey->user_id}:");
         }
+
         $this->info($apiKey->key);
     }
 
