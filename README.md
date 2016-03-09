@@ -25,7 +25,7 @@ I've been looking for an equivalent for Laravel but did not find any so this is 
 
 ## Quick start
 
-### Laravel 5.2.x
+### Laravel 5.1.x to 5.2.x
 
 Run `composer require chrisbjr/api-guard 3.1.*`
 
@@ -59,7 +59,7 @@ Then run the migration:
 
 It will setup two tables - api_keys and api_logs.
 
-### Laravel 5.0.x to 5.1.x
+### Laravel 5.0.x to 5.1.x (old users)
 
 Note: Documentation for use with Laravel 5.0.x and 5.1.x differs from Laravel 5.2.x. Please refer to the README [here](https://github.com/chrisbjr/api-guard/tree/v2.3.0).
 
