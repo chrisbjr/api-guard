@@ -49,6 +49,15 @@ Add the `ApiGuardAuth` facade to the end of the `aliases` array as well
 ),
 ```
 
+Add the following middleware inside your `app/Http/Kernel.php` file:
+
+```php
+protected $routeMiddleware = [
+    ...
+    'apiguard' => Chrisbjr\ApiGuard\Http\Middleware\ApiGuard::class,
+];
+```
+
 Now publish the migration and configuration files for api-guard:
 
     $ php artisan vendor:publish --provider="Chrisbjr\ApiGuard\Providers\ApiGuardServiceProvider"
