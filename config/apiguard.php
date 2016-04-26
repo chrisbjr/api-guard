@@ -99,6 +99,17 @@ return [
         */
         'auth' => Chrisbjr\ApiGuard\Providers\Auth\Illuminate::class
 
-    ]
+    ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Duration the API key should be cached for
+    |--------------------------------------------------------------------------
+    |
+    | This is the number of minutes API keys will be cached for. A value of 0
+    | or less (or not setting the option at all) disables API key caching.
+    |
+    */
+
+    'rememberApiKeyDuration' => 0,
 ];

@@ -89,7 +89,7 @@ class ApiGuard
                 throw new Exception("You ApiKey model should be an instance of ApiKeyRepository.");
             }
 
-            $this->apiKey = $apiKeyModel->getByKey($key);
+            $this->apiKey = $apiKeyModel->getByKey($key, config('apiguard.rememberApiKeyDuration', 0));
 
             if (empty($this->apiKey)) {
                 return $response->errorUnauthorized();
