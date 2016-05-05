@@ -3,6 +3,7 @@
 namespace Chrisbjr\ApiGuard\Repositories;
 
 use App;
+use Cache;
 use Eloquent;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -29,18 +30,17 @@ abstract class ApiKeyRepository extends Eloquent
 
     /**
      * @param $key
+     * @param int $rememberApiKeyDuration
      * @return ApiKeyRepository
      */
-    public function getByKey($key)
+    public function getByKey($key, $rememberApiKeyDuration = 0)
     {
-        $apiKey = self::where('key', '=', $key)
-            ->first();
-
-        if (empty($apiKey) || $apiKey->exists == false) {
-            return null;
-        }
-
-        return $apiKey;
+        $apiKey = $rememberApiKeyDuration > 0 ?
+            Cache::remember('api_keys:' . $key, $rememberApiKeyDuration, function () use ($key) {
+                return self::where('key', '=', $key)->first();
+            }) :
+            self::where('key', '=', $key)->first();
+        return !empty($apiKey) && $apiKey->exists === true ? $apiKey : null;
     }
 
     /**
