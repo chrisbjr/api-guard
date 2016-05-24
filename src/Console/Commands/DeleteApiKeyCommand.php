@@ -53,8 +53,9 @@ class DeleteApiKeyCommand extends Command
                     return;
                 }
 
-                $this->info("The API key {$key} was deleted.");
+                $apiKey->delete();
 
+                $this->info("The API key {$key} was deleted.");
                 return;
             }
 
