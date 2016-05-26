@@ -54,7 +54,7 @@ Add the following middleware inside your `app/Http/Kernel.php` file:
 ```php
 protected $routeMiddleware = [
     ...
-    'apiguard' => Chrisbjr\ApiGuard\Http\Middleware\ApiGuard::class,
+    'apiguard' => \Chrisbjr\ApiGuard\Http\Middleware\ApiGuard::class,
 ];
 ```
 
