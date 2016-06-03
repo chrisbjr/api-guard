@@ -69,7 +69,7 @@ class ApiGuardController extends Controller
             $method = last($routeArray);
 
             // We should check if key authentication is enabled for this method
-            if (Config::get('api-guard::keyAuthentication')) {
+            if (null !== Config::get('api-guard::keyAuthentication')) {
                 $keyAuthentication = Config::get('api-guard::keyAuthentication');
             } else {
                 $keyAuthentication = true;
