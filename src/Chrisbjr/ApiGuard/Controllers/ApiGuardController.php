@@ -74,8 +74,8 @@ class ApiGuardController extends Controller
             } else {
                 $keyAuthentication = true;
             }
-            if (isset($apiMethods[$method]['keyAuthentication']) && $apiMethods[$method]['keyAuthentication'] === false) {
-                $keyAuthentication = false;
+            if (isset($apiMethods[$method]['keyAuthentication'])) {
+                $keyAuthentication = $apiMethods[$method]['keyAuthentication'];
             }
 
             if ($keyAuthentication === true) {
