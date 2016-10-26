@@ -103,4 +103,16 @@ return array(
 
     'methodLimitIncrement' => '1 hour',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Set default behavior of key authentication
+    |--------------------------------------------------------------------------
+    |
+    | Set whether all the methods should look for the key authentication
+    | or not by default.
+    |
+    */
+
+    'keyAuthentication' => true,
+
 );
