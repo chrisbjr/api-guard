@@ -7,7 +7,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use League\Fractal\Manager;
 
-class ApiFormRequest extends FormRequest
+class ApiGuardFormRequest extends FormRequest
 {
     public function expectsJson()
     {

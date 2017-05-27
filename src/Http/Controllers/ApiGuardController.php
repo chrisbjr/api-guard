@@ -6,7 +6,7 @@ use EllipseSynergie\ApiResponse\Laravel\Response;
 use Illuminate\Routing\Controller;
 use League\Fractal\Manager;
 
-class ApiController extends Controller
+class ApiGuardController extends Controller
 {
     /**
      * @var Response
