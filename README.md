@@ -10,12 +10,11 @@ A simple way of authenticating your APIs with API keys using Laravel. This packa
 - philsturgeon's [Fractal](https://github.com/thephpleague/fractal)
 - maximebeaudoin's [api-response](https://github.com/ellipsesynergie/api-response)
 
-The concept for managing API keys is also taken from Phil Sturgeon's [codeigniter-restserver](https://github.com/philsturgeon/codeigniter-restserver).
-I've been looking for an equivalent for Laravel but did not find any so this is an implementation for that.
+## Laravel 5.3 and 5.4 is finally supported!
 
-## Laravel 5 is finally supported!
+**Laravel 5.3.x to 5.4.x: `~4.*`
 
-**Laravel 5.1.x to 5.2.x: `~3.*`
+**Laravel 5.1.x to 5.2.x: [`~3.*`](https://github.com/chrisbjr/api-guard/blob/3.1/README.md)
 
 **Laravel 5.1.x: `~2.*`
 
@@ -25,9 +24,9 @@ I've been looking for an equivalent for Laravel but did not find any so this is 
 
 ## Quick start
 
-### Laravel 5.1.x to 5.2.x
+### Installation for Laravel 5.3 to 5.4
 
-Run `composer require chrisbjr/api-guard 3.1.*`
+Run `composer require chrisbjr/api-guard 4.*`
 
 In your `config/app.php` add `Chrisbjr\ApiGuard\Providers\ApiGuardServiceProvider` to the end of the `providers` array
 
@@ -37,25 +36,6 @@ In your `config/app.php` add `Chrisbjr\ApiGuard\Providers\ApiGuardServiceProvide
     ...
     Chrisbjr\ApiGuard\Providers\ApiGuardServiceProvider::class,
 ),
-```
-
-Add the `ApiGuardAuth` facade to the end of the `aliases` array as well
-
-```php
-'aliases' => array(
-
-    ...
-    'ApiGuardAuth' => \Chrisbjr\ApiGuard\Facades\ApiGuardAuth::class,
-),
-```
-
-Add the following middleware inside your `app/Http/Kernel.php` file:
-
-```php
-protected $routeMiddleware = [
-    ...
-    'apiguard' => \Chrisbjr\ApiGuard\Http\Middleware\ApiGuard::class,
-];
 ```
 
 Now publish the migration and configuration files for api-guard:
@@ -68,14 +48,6 @@ Then run the migration:
 
 It will setup two tables - api_keys and api_logs.
 
-### Laravel 5.0.x to 5.1.x (old users)
-
-Note: Documentation for use with Laravel 5.0.x and 5.1.x differs from Laravel 5.2.x. Please refer to the README [here](https://github.com/chrisbjr/api-guard/tree/v2.3.0).
-
-### Laravel 4.2.x
-
-Note: Documentation for use with Laravel 4.2.x differs from Laravel 5.0.x. Please refer to the README [here](https://github.com/chrisbjr/api-guard/tree/v1.0). If you are using version `0.*` you can find the README [here](https://github.com/chrisbjr/api-guard/tree/v0.7)
-
 ### Generating your first API key
 
 Once you're done with the required setup, you can now generate your first API key.
@@ -84,236 +56,241 @@ Run the following command to generate an API key:
 
 `php artisan api-key:generate`
 
-Generally, you will want to generate API keys for each user in your application. The `api_keys` table has a `user_id` field which you can populate for your users.
+Generally, the `ApiKey` object is a polymorphic object meaning this can belong to more than one other model. 
 
-To generate an API key that is linked to a user, you can do the following:
+To generate an API key that is linked to another object (a "user", for example), you can do the following:
 
-`php artisan api-key:generate --user-id=1`
+`php artisan api-key:generate --id=1 --type=App\User`
+
+To specify that a model can have API keys, you can attach the `Apikeyable` trait to the model:
+
+```php
+class User extends Model
+{
+    use Apikeyable;
+    
+    ...
+}
+
+```
+
+This will attach the following methods to the model:
+
+```php
+// Get the API keys of the object
+$user->apiKeys();
+
+// Create an API key for the object
+$user->createApiKey();
+```
 
 To generate an API key from within your application, you can use the following method in the `ApiKey` model:
 
-```
+```php
 $apiKey = Chrisbjr\ApiGuard\Models\ApiKey::make()
+
+// Attach a model to the API key
+$apiKey = Chrisbjr\ApiGuard\Models\ApiKey::make($model)
 ```
 
 ## Usage
 
-Basic usage of ApiGuard is to create a controller and extend that class to use the `ApiGuardController`.
-
-Note: The namespace of the `ApiGuardController` differs from previous versions.
+You can start using ApiGuard by simply attaching the `auth.apikey` middleware to your API route:
 
 ```php
-<?php
+Route::middleware(['auth.apikey'])->get('/test', function (Request $request) {
+    return $request->user(); // Returns the associated model to the API key
+});
+```
 
+This effectively secures your API with an API key which needs to specified in the `X-Authorization` header. This can be configured in `config/apiguard.php`.
+
+Here is a sample cURL command to demonstrate:
+
+```
+curl -X GET \
+  http://apiguard.dev/api/test \
+  -H 'x-authorization: api-key-here'
+```
+
+You might also want to attach this middleware to your `api` middleware group in your `app/Http/Kernel.php` to take advantage of other Laravel features such as
+throttling.
+
+```php
+/**
+ * The application's route middleware groups.
+ *
+ * @var array
+ */
+protected $middlewareGroups = [
+    ...
+    
+    'api' => [
+        'throttle:60,1',
+        'bindings',
+        'auth.apikey',
+    ],
+];
+```
+
+If you noticed in the basic example, you can also access the attached model to the API key by calling `$request->user()`. We are attaching the related model in
+this method because in most use cases, this is actually the user.
+
+### Unauthorized Requests
+
+Unauthorized requests will get a `401` status response with the following JSON:
+ 
+```json
+{
+  "error": {
+    "code": "401",
+    "http_code": "GEN-UNAUTHORIZED",
+    "message": "Unauthorized."
+  }
+}
+```
+
+### ApiGuardController
+
+The `ApiGuardController` takes advantage of [Fractal](http://fractal.thephpleague.com/) and [api-response](https://github.com/ellipsesynergie/api-response) libraries.
+
+This enables us to easily create APIs with models and use transformers to give a standardized JSON response.
+
+Here is an example:
+
+Let's say you have the following model:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+class Book extends Model
+{
+    protected $fillable = [
+        'name',
+    ];
+}
+```
+
+You can make a basic controller which will return all books like this:
+
+```php
 use Chrisbjr\ApiGuard\Http\Controllers\ApiGuardController;
+use App\Transformers\BookTransformer;
+use App\Book;
 
 class BooksController extends ApiGuardController
 {
-
     public function all()
     {
         $books = Book::all();
 
         return $this->response->withCollection($books, new BookTransformer);
     }
-    
-    public function show($id)
+}
+```
+
+Now, you'll need to make the transformer for your Book object. Transformers help with defining and manipulating the variables you want to return to your JSON response.
+
+```php
+use League\Fractal\TransformerAbstract;
+use App\Book;
+
+class BookTransformer extends TransformerAbstract
+{
+    public function transform(Book $book)
     {
-        try {
-        
-            $book = Book::findOrFail($id);
-            
-            return $this->response->withItem($book, new BookTransformer);
-            
-        } catch (ModelNotFoundException $e) {
-        
-            return $this->response->errorNotFound();
-            
-        }
-    }
-
-}
-```
-
-You should be able to use the api-response object by using `$this->response`. More examples can be found on the Github page: [https://github.com/ellipsesynergie/api-response](https://github.com/ellipsesynergie/api-response).
-
-You can access the above controller by creating a basic route in your `app/routes.php`:
-
-```php
-Route::get('api/v1/books', 'BooksController@all');
-Route::get('api/v1/books/{id}', 'BooksController@show');
-```
-
-You will need to use your API key and put it in the header to access it. By default, the header value is using the `X-Authorization` parameter. You can change this in the config file.
-
-Try calling this route using `curl`
-
-    curl --header "X-Authorization: 2ed9d72e5596800bf805ca1c735e446df72019ef" http://localhost:8000/api/v1/books
-
-You should get the following response:
-
-```javascript
-{
-    "data": {
-        "id": 1,
-        "title": "The Great Adventures of Chris",
-        "created_at": {
-            "date": "2014-03-25 18:54:18",
-            "timezone_type": 3,
-            "timezone": "UTC"
-        },
-        "updated_at": {
-            "date": "2014-03-25 18:54:18",
-            "timezone_type": 3,
-            "timezone": "UTC"
-        },
-        "deleted_at": null
+        return [
+            'id'         => $book->id,
+            'name'       => $book->name,
+            'created_at' => $book->created_at,
+            'updated_at' => $book->updated_at,
+        ];
     }
 }
 ```
 
-## API Options
+Once you have this accessible in your routes, you will get the following response from the controller:
 
-There are various options that can be specified for each method in your controller. These options can be specified inside the `$apiMethods` variable. Examples can be found below.
-
-### Turning off API key authentication for a specific method
-
-By default, all the methods in the ApiGuardController will be authenticated. To turn this off for a specific method, use the `keyAuthentication` option.
-
-```php
-<?php
-
-use Chrisbjr\ApiGuard\Http\Controllers\ApiGuardController;
-
-class BooksController extends ApiGuardController
+```json
 {
-
-    protected $apiMethods = [
-        'show' => [
-            'keyAuthentication' => false
-        ],
-    ];
-
-    ...
-
+  "data": {
+    "id": 1,
+    "title": "The Great Adventures of Chris",
+    "created_at": {
+      "date": "2017-05-25 18:54:18",
+      "timezone_type": 3,
+      "timezone": "UTC"
+    },
+    "updated_at": {
+      "date": "2017-05-25 18:54:18",
+      "timezone_type": 3,
+      "timezone": "UTC"
+    }
+  }
 }
 ```
 
-This above example will turn off key authentication for the `show` method.
+More examples can be found on the Github page: [https://github.com/ellipsesynergie/api-response](https://github.com/ellipsesynergie/api-response).
 
-### Specifying access levels for API methods
+To learn more about transformers, visit the PHP League's documentation on Fractal: [Fractal](http://fractal.thephpleague.com/)
 
-If you take a look at the `api_keys` table in your database, you will notice that there is a `level` field.
+### API Validation Responses
 
-This will allow you to specify a level for your API key and if the method has a higher level than the API key, access will be restricted. Here is an example on how to set the level on a method:
+ApiGuard comes with a request class that can handle validation of requests for you and throw a standard response.
+
+You can create a `Request` class as you usually do but in order to get a standard JSON response you'll have to extend the `ApiGuardFormRequest` class.
 
 ```php
-<?php
+use Chrisbjr\ApiGuard\Http\Requests\ApiGuardFormRequest;
 
-use Chrisbjr\ApiGuard\Http\Controllers\ApiGuardController;
-
-class BooksController extends ApiGuardController
+class BookStoreRequest extends ApiGuardFormRequest
 {
+    public function authorize()
+    {
+        return true;
+    }
 
-    protected $apiMethods = [
-        'show' => [
-            'level' => 10
-        ],
-    ];
-    
-    ...
-
+    public function rules()
+    {
+        return [
+            'name' => 'required',
+        ];
+    }
 }
 ```
 
-Now if your API key has a level of 9 or lower, then access to the `show` method will be restricted.
-
-### Limiting API key access rate
-
-You can limit the rate at which an API key can have access to a particular method by using the `limits.key` option.
-
+Now you can use this in your controller as you normally do with Laravel:
 
 ```php
-<?php
-
 use Chrisbjr\ApiGuard\Http\Controllers\ApiGuardController;
+use App\Transformers\BookTransformer;
+use App\Book;
 
 class BooksController extends ApiGuardController
 {
+    public function store(BookStoreRequest $request)
+    {
+        // Request should already be validated
+        
+        $book = Book::create($request->all())
 
-    protected $apiMethods = [
-        'show' => [
-            'limits' => [
-                'key' => [
-                    'increment' => '1 hour',
-                    'limit' => 100
-                ]
-            ]
-        ],
-    ];
-    
-    ...
-
+        return $this->response->withItem($book, new BookTransformer);
+    }
 }
 ```
 
-The above example will limit the access to the `show` method of an API key to 100 requests for every hour.
+If the request failed to pass the validation rules, it will return with a response like the following:
 
-Note: The `increment` option can be any value that is accepted by the `strtotime()` method.
-
-### Limiting access to a method
-
-There is also an option to limit the request rate for a given method no matter what API key is used. For this, we use the `limits.method` option.
-
-```php
-<?php
-
-use Chrisbjr\ApiGuard\Http\Controllers\ApiGuardController;
-
-class BooksController extends ApiGuardController
+```json
 {
-
-    protected $apiMethods = [
-        'show' => [
-            'limits' => [
-                'method' => [
-                    'increment' => '1 day',
-                    'limit' => 1000
-                ]
-            ]
-        ],
-    ];
-    
-    ...
-
+  "error": {
+    "code": "GEN-UNPROCESSABLE",
+    "http_code": 422,
+    "message": {
+      "name": [
+        "The name field is required."
+      ]
+    }
+  }
 }
 ```
-
-The above example will limit the request rate to the `show` method to 1000 requests per day.
-
-Note: The `increment` option can be any value that is accepted by the `strtotime()` method.
-
-### Logging at method level
-
-You can set logging at method level by using the `logged` option.
-
-```php
-<?php
-
-use Chrisbjr\ApiGuard\Http\Controllers\ApiGuardController;
-
-class BooksController extends ApiGuardController
-{
-
-    protected $apiMethods = [
-        'show' => [
-            'logged' => true
-        ]
-    ];
-    
-    ...
-
-}
-```
-
-By default for all methods in api-guard, the option `logged` is set to true. Set it to `false` to exclude that method for logging.

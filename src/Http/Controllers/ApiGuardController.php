@@ -2,42 +2,25 @@
 
 namespace Chrisbjr\ApiGuard\Http\Controllers;
 
-use ApiGuardAuth;
-use Chrisbjr\ApiGuard\Builders\ApiResponseBuilder;
-use Illuminate\Routing\Controller;
 use EllipseSynergie\ApiResponse\Laravel\Response;
+use Illuminate\Routing\Controller;
+use League\Fractal\Manager;
 
 class ApiGuardController extends Controller
 {
-
     /**
      * @var Response
      */
-    public $response;
-
-    /**
-     * The authenticated user
-     *
-     * @var
-     */
-    public $user;
-
-    /**
-     * @var array
-     */
-    protected $apiMethods;
+    protected $response;
 
     public function __construct()
     {
-        $serializedApiMethods = serialize($this->apiMethods);
+        $fractal = new Manager();
 
-        // Launch middleware
-        $this->middleware('apiguard:' . $serializedApiMethods);
+        if (isset($_GET['include'])) {
+            $fractal->parseIncludes($_GET['include']);
+        }
 
-        // Attempt to get an authenticated user.
-        $this->user = ApiGuardAuth::getUser();
-
-        $this->response = ApiResponseBuilder::build();
+        $this->response = new Response($fractal);
     }
-
 }
