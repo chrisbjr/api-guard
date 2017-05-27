@@ -3,6 +3,7 @@
 namespace Chrisbjr\ApiGuard\Http\Middleware;
 
 use Carbon\Carbon;
+use Chrisbjr\ApiGuard\Events\ApiKeyAuthenticated;
 use Chrisbjr\ApiGuard\Models\Device;
 use Closure;
 
@@ -33,22 +34,19 @@ class AuthenticateApiKey
             'last_ip_address' => $request->ip(),
         ]);
 
-        $user = $apiKey->apikeyable;
-
-        if (! empty(config('apiguard.auth'))) {
-            $apiGuardAuth = app(config('apiguard.auth'));
-            $apiGuardAuth->authenticate($user);
-        }
+        $apikeyable = $apiKey->apikeyable;
 
         // Bind the user or object to the request
         // By doing this, we can now get the specified user through the request object in the controller using:
         // $request->user()
-        $request->setUserResolver(function () use ($user) {
-            return $user;
+        $request->setUserResolver(function () use ($apikeyable) {
+            return $apikeyable;
         });
 
         // Attach the apikey object to the request
         $request->apiKey = $apiKey;
+
+        event(new ApiKeyAuthenticated($request, $apiKey));
 
         return $next($request);
     }
