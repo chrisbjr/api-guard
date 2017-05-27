@@ -24,7 +24,7 @@ A simple way of authenticating your APIs with API keys using Laravel. This packa
 
 ## Quick start
 
-### Laravel 5.3 to 5.4
+### Installation for Laravel 5.3 to 5.4
 
 Run `composer require chrisbjr/api-guard 4.*`
 
@@ -47,18 +47,6 @@ Then run the migration:
     $ php artisan migrate
 
 It will setup two tables - api_keys and api_logs.
-
-### Laravel 5.2 (old users)
-
-Note: Documentation for use with Laravel 5.2.x differs from Laravel 5.3 and above. Please refer to the README [here](https://github.com/chrisbjr/api-guard/blob/3.1/README.md).
-
-### Laravel 5.0 to 5.1 (old users)
-
-Note: Documentation for use with Laravel 5.0.x and 5.1.x differs from Laravel 5.2.x. Please refer to the README [here](https://github.com/chrisbjr/api-guard/tree/v2.3.0).
-
-### Laravel 4.2
-
-Note: Documentation for use with Laravel 4.2.x differs from Laravel 5.0.x. Please refer to the README [here](https://github.com/chrisbjr/api-guard/tree/v1.0). If you are using version `0.*` you can find the README [here](https://github.com/chrisbjr/api-guard/tree/v0.7)
 
 ### Generating your first API key
 
