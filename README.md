@@ -136,8 +136,6 @@ protected $middlewareGroups = [
 If you noticed in the basic example, you can also access the attached model to the API key by calling `$request->user()`. We are attaching the related model in
 this method because in most use cases, this is actually the user.
 
-Basic usage of ApiGuard is to create a controller and extend that class to use the `ApiGuardController`.
-
 ### Unauthorized Requests
 
 Unauthorized requests will get a `401` status response with the following JSON:
