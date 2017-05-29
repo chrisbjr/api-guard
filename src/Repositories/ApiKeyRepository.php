@@ -6,6 +6,7 @@ use App;
 use Cache;
 use Eloquent;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Chrisbjr\ApiGuard\Models\ApiKey;
 
 /**
  * Class ApiKeyRepository
@@ -78,6 +79,21 @@ abstract class ApiKeyRepository extends Eloquent
     }
 
     /**
+     * Returns a key by user_id and id fields
+     *
+     * @param int $id
+     * @param int $userId
+     * @return ApiKey
+     */
+    public static function getByIdAndUserId($id, $userId)
+    {
+        return self::where([
+            'id'        =>  $id,
+            'user_id'   =>  $userId
+        ])->first();
+    }
+
+    /**
      * Checks whether a key exists in the database or not
      *
      * @param $key
@@ -87,9 +103,11 @@ abstract class ApiKeyRepository extends Eloquent
     {
         $apiKeyCount = self::where('key', '=', $key)->limit(1)->count();
 
-        if ($apiKeyCount > 0) return true;
+        if ($apiKeyCount > 0) {
+            return true;
+        }
 
         return false;
     }
-
 }
+

@@ -32,7 +32,7 @@ return [
     |
     */
 
-    'keyName'              => 'X-Authorization',
+    'keyName'              => env('APIGUARD_KEY_NAME', 'X-Authorization'),
 
     /*
     |--------------------------------------------------------------------------
