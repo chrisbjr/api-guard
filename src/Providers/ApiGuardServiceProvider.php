@@ -43,7 +43,7 @@ class ApiGuardServiceProvider extends ServiceProvider
     private function defineMiddleware($router)
     {
         foreach ($this->middlewares as $name => $class) {
-            if (str_contains(App::VERSION(), "5.4.")) {
+            if ( version_compare(app()->version(), '5.4.0') >= 0 ) {
                 $router->aliasMiddleware($name, $class);
             } else {
                 $router->middleware($name, $class);

@@ -1,7 +1,7 @@
 ApiGuard
 ========
 
-[![Latest Stable Version](https://poser.pugx.org/chrisbjr/api-guard/v/stable)](https://packagist.org/packages/chrisbjr/api-guard) [![Total Downloads](https://poser.pugx.org/chrisbjr/api-guard/downloads)](https://packagist.org/packages/chrisbjr/api-guard) 
+[![Latest Stable Version](https://poser.pugx.org/chrisbjr/api-guard/v/stable)](https://packagist.org/packages/chrisbjr/api-guard) [![Total Downloads](https://poser.pugx.org/chrisbjr/api-guard/downloads)](https://packagist.org/packages/chrisbjr/api-guard)
 
 [![Join the chat at https://gitter.im/chrisbjr/api-guard](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/chrisbjr/api-guard?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -10,9 +10,9 @@ A simple way of authenticating your APIs with API keys using Laravel. This packa
 - philsturgeon's [Fractal](https://github.com/thephpleague/fractal)
 - maximebeaudoin's [api-response](https://github.com/ellipsesynergie/api-response)
 
-## Laravel 5.3 and 5.4 is finally supported!
+## Laravel 5.3, 5.4 and 5.5 is finally supported!
 
-**Laravel 5.3.x to 5.4.x: `~4.*`
+**Laravel 5.3.x onwards: `~4.*`
 
 **Laravel 5.1.x to 5.2.x: [`~3.*`](https://github.com/chrisbjr/api-guard/blob/3.1/README.md)
 
@@ -46,7 +46,7 @@ Then run the migration:
 
     $ php artisan migrate
 
-It will setup two tables - api_keys and api_logs.
+It will setup  `api_keys` table.
 
 ### Generating your first API key
 
@@ -56,19 +56,21 @@ Run the following command to generate an API key:
 
 `php artisan api-key:generate`
 
-Generally, the `ApiKey` object is a polymorphic object meaning this can belong to more than one other model. 
+Generally, the `ApiKey` object is a polymorphic object meaning this can belong to more than one other model.
 
 To generate an API key that is linked to another object (a "user", for example), you can do the following:
 
-`php artisan api-key:generate --id=1 --type=App\User`
++`php artisan api-key:generate --id=1 --type="App\User"`
 
 To specify that a model can have API keys, you can attach the `Apikeyable` trait to the model:
 
 ```php
+use Chrisbjr\ApiGuard\Models\Mixins\Apikeyable;
+
 class User extends Model
 {
     use Apikeyable;
-    
+
     ...
 }
 
@@ -124,7 +126,7 @@ throttling.
  */
 protected $middlewareGroups = [
     ...
-    
+
     'api' => [
         'throttle:60,1',
         'bindings',
@@ -139,7 +141,7 @@ this method because in most use cases, this is actually the user.
 ### Unauthorized Requests
 
 Unauthorized requests will get a `401` status response with the following JSON:
- 
+
 ```json
 {
   "error": {
@@ -271,7 +273,7 @@ class BooksController extends ApiGuardController
     public function store(BookStoreRequest $request)
     {
         // Request should already be validated
-        
+
         $book = Book::create($request->all())
 
         return $this->response->withItem($book, new BookTransformer);
