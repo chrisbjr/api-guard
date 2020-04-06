@@ -1,6 +1,11 @@
 ApiGuard
 ========
 
+# This package is no longer maintained
+
+This package is no longer maintained as Laravel already has a similar feature built-in since Laravel 5.8 and Laravel 6.x. Documentation on Laravel's API authentication can be found [here](https://laravel.com/docs/5.8/api-authentication). Furthermore, since Laravel 7.x, there is a new Laravel package called [Airlock/Sanctum](https://laravel.com/docs/7.x/sanctum) that would better serve API authentication purposes.
+
+
 [![Latest Stable Version](https://poser.pugx.org/chrisbjr/api-guard/v/stable)](https://packagist.org/packages/chrisbjr/api-guard) [![Total Downloads](https://poser.pugx.org/chrisbjr/api-guard/downloads)](https://packagist.org/packages/chrisbjr/api-guard)
 
 [![Join the chat at https://gitter.im/chrisbjr/api-guard](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/chrisbjr/api-guard?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
